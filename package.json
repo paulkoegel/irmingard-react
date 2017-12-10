@@ -12,5 +12,11 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
+  },
+  "devDependencies": {
+    "babel-eslint": "^8.0.3",
+    "eslint": "^4.13.0",
+    "eslint-config-semistandard-react": "^4.2.0",
+    "eslint-plugin-semistandard-react": "^4.1.0"
   }
 }
