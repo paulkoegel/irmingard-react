@@ -67,7 +67,7 @@ const serveCardsToColumn = (gameState, columnIndex, cardsToServe) => {
   gameState);
 };
 
-export const serveCards = gameState => {
+const serveCards = gameState => {
   console.log('stack before:', gameState.getIn(['stack']).size);
   const indexedCardCounts = [1, 2, 3, 4, 5, 4, 3, 2, 1].map((cardCount, index) => [cardCount, index]);
   return indexedCardCounts.reduce((m, [cardCount, index]) => {
@@ -77,8 +77,10 @@ export const serveCards = gameState => {
   }, gameState);
 };
 
-export const initialGameState = Map({
+const shuffledGameState = Map({
   columns: makeColumns(),
   piles: makePiles(),
   stack: shuffledStack()
 });
+
+export const newGameState = () => serveCards(shuffledGameState);

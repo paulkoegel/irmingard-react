@@ -1,8 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
+import Game from './Game';
 import registerServiceWorker from './registerServiceWorker';
+import { newGameState } from './setup';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+const initialGameState = newGameState();
+
+ReactDOM.render(<Game gameState={initialGameState} />, document.getElementById('root'));
 registerServiceWorker();
