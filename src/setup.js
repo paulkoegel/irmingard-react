@@ -1,18 +1,18 @@
-import { fromJS, List, Map } from 'immutable';
-import { chain, range } from 'ramda'; // Immutable's Range is lazy and has given me nothing but pain in `updateIn` calls
+import { fromJS, List, Map, Record } from 'immutable';
+import { chain as flatMap, range } from 'ramda'; // Immutable's Range is lazy and has given me nothing but pain in `updateIn` calls
 import immutableShuffle from './helpers/shuffle';
 
-const TOTAL_COLUMNS = 9;
+export const TOTAL_COLUMNS = 9;
 const SUITS = List.of(
   'clubs',
   'diamonds',
   'hearts',
   'spades'
 );
-const DOUBLE_SUITS = fromJS(chain(suit => [suit, suit], SUITS));
+const DOUBLE_SUITS = fromJS(flatMap(suit => [suit, suit], SUITS));
 
 const makeCardsForSuit = suit => {
-  return fromJS(chain(
+  return fromJS(flatMap(
     value => [
       {
         deck: 'a',
@@ -29,8 +29,8 @@ const makeCardsForSuit = suit => {
   ));
 };
 
-const shuffledStack = () => {
-  const stack = List(chain(makeCardsForSuit, SUITS));
+const makeShuffledStack = () => {
+  const stack = List(flatMap(makeCardsForSuit, SUITS));
   return immutableShuffle(stack);
 };
 
@@ -40,17 +40,22 @@ const makeColumns = () => {
   );
 };
 
+const PileRecord = Record({
+  cards: List(),
+  index: null,
+  suit: null
+});
+
 const makePiles = () => {
   return DOUBLE_SUITS.map((suit, index) => {
-    return ({
-      cards: List(),
+    return new PileRecord({
       index,
       suit
     });
   });
 };
 
-const serveCardToColumn = (gameState, columnIndex, isOpen=false) => {
+export const serveCardToColumn = (gameState, columnIndex, isOpen=false) => {
   const card = gameState.get('stack').last().merge({ isOpen });
   if (card) {
     return gameState.updateIn(['stack'], stack => stack.pop())
@@ -68,19 +73,16 @@ const serveCardsToColumn = (gameState, columnIndex, cardsToServe) => {
 };
 
 const serveCards = gameState => {
-  console.log('stack before:', gameState.getIn(['stack']).size);
   const indexedCardCounts = [1, 2, 3, 4, 5, 4, 3, 2, 1].map((cardCount, index) => [cardCount, index]);
   return indexedCardCounts.reduce((m, [cardCount, index]) => {
-    const x = serveCardsToColumn(m, index, cardCount);
-    console.log('stack AFTER:', x.getIn(['stack']).size);
-    return x;
+    return serveCardsToColumn(m, index, cardCount);
   }, gameState);
 };
 
-const shuffledGameState = Map({
+const initialGameState = Map({
   columns: makeColumns(),
   piles: makePiles(),
-  stack: shuffledStack()
+  stack: makeShuffledStack()
 });
 
-export const newGameState = () => serveCards(shuffledGameState);
+export const newGameState = () => serveCards(initialGameState);
