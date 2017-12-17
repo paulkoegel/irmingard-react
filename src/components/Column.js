@@ -9,9 +9,9 @@ export default class Column extends Component {
   render () {
     return (
       <li className='Column'>
-        <ul>
+        <ul className='Column_cards'>
           { this.props.column.get('cards').map(card =>
-            <Card card={card} key={this.idFor(card)} />
+            <Card card={card} columnIndex={this.props.index} key={this.idFor(card)} />
           )}
         </ul>
       </li>

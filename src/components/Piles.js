@@ -7,17 +7,16 @@ export default class Piles extends Component {
 
     return (
       <div className='Piles'>
-        <div>
-          <h3 className='Piles_headline'>
-            Discard Piles
-          </h3>
-          <span className='Piles_note'>
-            Start discarding aces here with a double click - then twos, threes, etc.
-          </span>
-        </div>
-        <ul>
+        <h3 className='Piles_headline'>
+          Discard Piles
+        </h3>
+        <p className='Piles_note'>
+          Start discarding aces here with a double click - then twos, threes, etc.
+        </p>
+
+        <ul className='Piles_list'>
           { this.props.piles.map((pile, index) => {
-            return <Pile key={index} pile={pile} />;
+            return <Pile index={index} key={index} pile={pile} />;
           })}
           <li>
             <button onClick={() => onServeNewCards()}>

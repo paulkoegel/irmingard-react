@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-// import colourForSuit from 'helpers/coulourForSuit';
-import symbolForSuit from 'helpers/symbolForSuit';
+import colourForSuit from 'helpers/colourForSuit';
 import displayValueForCard from 'helpers/displayValueForCard';
+import symbolForSuit from 'helpers/symbolForSuit';
 
 export default class Card extends Component {
   labelFor (card) {
@@ -11,9 +11,15 @@ export default class Card extends Component {
   render () {
     const { card } = this.props;
     const isOpen = card.get('isOpen');
+    const className = ['Card',
+      'isOpen',
+      colourForSuit(card.get('suit')),
+      card.get('isMoving') && 'isMoving'
+    ].filter(e => e).join(' ');
+
     return (
       isOpen
-        ? <li className={`Card isOpen${card.get('isMoving') ? ' isMoving' : ''}`}>
+        ? <li className={className}>
           <span>
             { this.labelFor(card) }
           </span>

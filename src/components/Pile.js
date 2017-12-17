@@ -14,7 +14,7 @@ export default class Pile extends Component {
     return (
       <li className='Pile'>
         { topCard
-          ? <Card card={topCard} />
+          ? <Card card={topCard} pileIndex={this.props.index} />
           : <div className={placeholderClassNames}>
             { symbolForSuit(suit) }
           </div>

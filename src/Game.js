@@ -1,7 +1,7 @@
 import './Game.css';
 import React, { Component } from 'react';
 // import { is } from 'immutable';
-import ColumnsList from 'components/ColumnsList';
+import Columns from 'components/Columns';
 import Piles from 'components/Piles';
 import serveNewCards from 'helpers/serveNewCards';
 import { newGameState } from 'setup';
@@ -31,8 +31,8 @@ export default class Game extends Component {
     const { gameState } = this.state;
 
     return (
-      <div>
-        <ColumnsList columns={gameState.get('columns')} />
+      <div className='Game'>
+        <Columns columns={gameState.get('columns')} />
         <Piles onServeNewCards={this.handleServeNewCards} piles={gameState.get('piles')} />
       </div>
     );

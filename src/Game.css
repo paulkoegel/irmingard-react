@@ -1,7 +1,142 @@
+@media (min-width: 0px) {
+  html {
+    font-size: 30.00%;
+  }
+}
+
+@media (min-width: 320px) {
+  html {
+    font-size: 40.00%;
+  }
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 50.06%;
+  }
+}
+
+@media (min-width: 1024px) {
+  html {
+    font-size: 58.74%;
+  }
+}
+
+@media (min-width: 1200px) {
+  html {
+    font-size: 62.50%;
+  }
+}
+
+@media (min-width: 1600px) {
+  html {
+    font-size: 70.03%;
+  }
+}
+
+body {
+  font-size: 1.6rem;
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+}
+
 .red {
   color: red;
 }
 
 .black {
   color: black;
+}
+
+#root {
+  display: flex;
+  justify-content: center;
+}
+
+.Game {
+  max-width: 1000px;
+  width: 100%;
+}
+
+.Columns {
+  display: flex;
+  list-style-type: none;
+}
+
+.Column_cards {
+  list-style-type: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.Column {
+  margin-right: 15px;
+  flex: 1 1 0;
+}
+
+.Column:last-child {
+  margin-right: 0;
+}
+
+.Card {
+  margin: 2px 0;
+  height: 25px;
+  border-radius: 3px;
+  border: 1px solid #bbb;
+  background-color: #fafafa;
+  font-size: 2.1rem;
+  line-height: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+@media (min-width: 700px) {
+  .Card {
+    font-size: 1.7rem;
+  }
+}
+
+.Card.isOpen {
+  cursor: pointer;
+}
+
+.m-card.as-moving {
+  background-color: rgba(255, 255, 0, 0.5);
+}
+
+.m-card.is-moveable {
+  border: 1px solid rgba(0, 200, 0, 0.5);
+  box-shadow: 0px 0px 3px rgba(0, 200, 0, 1);
+}
+
+.Card.isClosed {
+  background-position: center 72px;
+  background-image: url(./images/card-back.png);
+  background-color: #444;
+}
+
+.m-card_small {
+  border-radius: 3px;
+  border: 1px solid #bbb;
+  padding: 0 3px;
+  background: #fafafa;
+}
+
+.Piles_list {
+  list-style-type: none;
+  display: flex;
+}
+
+.Pile {
+  margin-right: 10px;
+}
+
+.Pile:last-child {
+  margin-right: 0;
 }
