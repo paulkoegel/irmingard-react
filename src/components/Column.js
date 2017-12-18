@@ -8,11 +8,19 @@ export default class Column extends Component {
   }
 
   render () {
+    const { column, onCardClick } = this.props;
+
     return (
       <li className='Column'>
         <ul className='Column_cards'>
-          { this.props.column.get('cards').map((card, index) =>
-            <Card card={card} columnIndex={this.props.index} cardIndex={index} key={this.idFor(card)} />
+          { column.cards.map((card, index) =>
+            <Card
+              card={card}
+              cardIndex={index}
+              columnIndex={column.index}
+              key={this.idFor(card)}
+              onClick={onCardClick}
+            />
           )}
         </ul>
       </li>

@@ -1,10 +1,13 @@
 import './Game.css';
 import React, { Component } from 'react';
+import { isEmpty, range } from 'ramda';
+import { is, List } from 'immutable';
 // import { is } from 'immutable';
 import Columns from 'components/Columns';
 import Piles from 'components/Piles';
 import serveNewCards from 'helpers/serveNewCards';
 import { newGameState } from 'setup';
+import colourForSuit from 'helpers/colourForSuit';
 
 export default class Game extends Component {
   state = {
@@ -14,6 +17,73 @@ export default class Game extends Component {
 
   componentDidMount () {
     window.onkeydown = this.handleKeyDown;
+  }
+
+  childrenOf (columnIndex, cardIndex) {
+    const { gameState } = this.state;
+    return gameState.columns.get(columnIndex).cards.skipUntil((e, i) => i > cardIndex);
+  }
+
+  // Takes a List of cards and checks whether they have alternating colours (..,red,black,red,black,..)
+  haveAlternatingColours (cards) {
+    const colours = cards.map(card => colourForSuit(card.suit));
+    console.log('haveAlternatingColours', colours.toJS());
+    let isAlternating = true;
+    let previousColour = colours.first();
+    console.log('initial previousColour', previousColour);
+    colours.rest().forEach(colour => {
+      console.log('loop', colour, previousColour, isAlternating, isAlternating && colour !== previousColour);
+      isAlternating = isAlternating && colour !== previousColour;
+      previousColour = colour;
+    });
+    console.log('haveAlternatingColours', isAlternating);
+    return isAlternating;
+  }
+
+  // Checks whether a vector of cards is ordered by the cards' values and has no gaps.
+  haveDescendingValues (cards) {
+    const values = cards.map(card => card.value);
+    const firstValue = cards.first().value;
+    const lastValue = cards.last().value;
+    const rv = is(values, List(range(lastValue, firstValue + 1)).reverse());
+    console.log('haveDescendingValues', rv, values.toJS(), List(range(lastValue, firstValue + 1)).reverse().toJS());
+    return rv;
+  }
+
+  // Takes a column and a card and checks whether the card and its children are sorted (i.e. with alternating colours and descending values)."
+  hasMoveableChildren (columnIndex, cardIndex) {
+    const children = this.childrenOf(columnIndex, cardIndex);
+
+    if (isEmpty(children)) {
+      console.log('hasMoveableChildren: NO children');
+      return true; // the last card of the column is always moveable
+    } else {
+      const card = this.cardAt(columnIndex, cardIndex);
+      const cards = List.of(card, ...children);
+      const rv = this.haveDescendingValues(cards) && this.haveAlternatingColours(cards);
+      console.log('hasMoveableChildren:', rv);
+      return rv;
+    }
+  }
+
+  cardAt (columnIndex, cardIndex) {
+    return this.state.gameState.columns.get(columnIndex).cards.get(cardIndex);
+  }
+
+  isMoveable (columnIndex, cardIndex) {
+    const card = this.cardAt(columnIndex, cardIndex);
+    if (!card) throw new Error(`isMoveable: cardIndex (${cardIndex}) is out of bounds for column number ${columnIndex}. Card is: ${JSON.stringify(card.toJS())}`);
+
+    console.log('isOpen', card.isOpen);
+    return card.isOpen && this.hasMoveableChildren(columnIndex, cardIndex);
+  }
+
+  handleColumnCardClick = (cardIndex, columnIndex) => {
+    if (this.isMoveable(columnIndex, cardIndex)) {
+      console.log('YES', [columnIndex, cardIndex]);
+    } else {
+      console.log('NO', [columnIndex, cardIndex]);
+    }
   }
 
   handleKeyDown = event => {
@@ -32,8 +102,8 @@ export default class Game extends Component {
 
     return (
       <div className='Game'>
-        <Columns columns={gameState.get('columns')} />
-        <Piles onServeNewCards={this.handleServeNewCards} piles={gameState.get('piles')} />
+        <Columns columns={gameState.columns} onCardClick={this.handleColumnCardClick} />
+        <Piles onServeNewCards={this.handleServeNewCards} piles={gameState.piles} />
       </div>
     );
   }

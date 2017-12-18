@@ -3,10 +3,16 @@ import Column from './Column';
 
 export default class Columns extends Component {
   render () {
+    const { columns, onCardClick } = this.props;
+
     return (
       <ul className='Columns'>
-        { this.props.columns.map((column, index) => (
-          <Column column={column} key={index} index={index} />
+        { columns.map((column, index) => (
+          <Column
+            column={column}
+            key={index}
+            onCardClick={onCardClick}
+          />
         ))}
       </ul>
     );

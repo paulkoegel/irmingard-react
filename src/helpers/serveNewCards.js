@@ -4,7 +4,7 @@ import { serveCardToColumn, TOTAL_COLUMNS } from 'setup';
 import unmarkAllCards from 'helpers/unmarkAllCards';
 
 const serveNewCardsToColumns = gameState => {
-  const cardsToServe = min(TOTAL_COLUMNS, gameState.get('stack').size);
+  const cardsToServe = min(TOTAL_COLUMNS, gameState.stack.size);
   return List(range(0, cardsToServe)).reduce((memo, columnIndex) => {
     return serveCardToColumn(memo, columnIndex, true);
   }, gameState);

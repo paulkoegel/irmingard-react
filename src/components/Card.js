@@ -9,21 +9,23 @@ export default class Card extends Component {
   }
 
   render () {
-    const { card } = this.props;
-    const { isOpen } = card;
+    const { card, cardIndex, columnIndex, onClick } = this.props;
+    const { isMoving, isOpen, suit } = card;
     const className = ['Card',
       'isOpen',
-      colourForSuit(card.suit),
-      card.isMoving && 'isMoving'
+      colourForSuit(suit),
+      isMoving && 'isMoving'
     ].filter(e => e).join(' ');
 
     return (
       isOpen
-        ? <li className={className}>
-          <span>
-            { this.labelFor(card) }
-          </span>
-        </li>
+        ? (
+          <li className={className} onClick={() => { onClick(cardIndex, columnIndex); }}>
+            <span>
+              { this.labelFor(card) }
+            </span>
+          </li>
+        )
         : <li className='Card isClosed' />
     );
   }
