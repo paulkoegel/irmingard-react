@@ -3,15 +3,16 @@ import Card from './Card';
 
 export default class Column extends Component {
   idFor (card) {
-    return `${card.get('deck')}.${card.get('suit')}.${card.get('value')}`;
+    const { deck, suit, value } = card;
+    return [deck, suit, value].join('.');
   }
 
   render () {
     return (
       <li className='Column'>
         <ul className='Column_cards'>
-          { this.props.column.get('cards').map(card =>
-            <Card card={card} columnIndex={this.props.index} key={this.idFor(card)} />
+          { this.props.column.get('cards').map((card, index) =>
+            <Card card={card} columnIndex={this.props.index} cardIndex={index} key={this.idFor(card)} />
           )}
         </ul>
       </li>

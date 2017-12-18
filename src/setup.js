@@ -1,5 +1,5 @@
 import { fromJS, List, Map, Record } from 'immutable';
-import { chain as flatMap, range } from 'ramda'; // Immutable's Range is lazy and has given me nothing but pain in `updateIn` calls
+import { chain as flatMap, range } from 'ramda'; // Immutable's Range is lazy and gives nothing but pain in `updateIn` calls
 import immutableShuffle from './helpers/shuffle';
 
 export const TOTAL_COLUMNS = 9;
@@ -11,19 +11,26 @@ const SUITS = List.of(
 );
 const DOUBLE_SUITS = fromJS(flatMap(suit => [suit, suit], SUITS));
 
+const CardRecord = Record({
+  deck: null,
+  isOpen: false,
+  suit: null,
+  value: null
+});
+
 const makeCardsForSuit = suit => {
-  return fromJS(flatMap(
+  return List(flatMap(
     value => [
-      {
+      new CardRecord({
         deck: 'a',
         suit,
         value
-      },
-      {
+      }),
+      new CardRecord({
         deck: 'b',
         suit,
         value
-      }
+      })
     ],
     range(1, 14)
   ));

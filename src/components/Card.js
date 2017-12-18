@@ -5,16 +5,16 @@ import symbolForSuit from 'helpers/symbolForSuit';
 
 export default class Card extends Component {
   labelFor (card) {
-    return `${symbolForSuit(card.get('suit'))} ${displayValueForCard(card)}`;
+    return `${symbolForSuit(card.suit)} ${displayValueForCard(card)}`;
   }
 
   render () {
     const { card } = this.props;
-    const isOpen = card.get('isOpen');
+    const { isOpen } = card;
     const className = ['Card',
       'isOpen',
-      colourForSuit(card.get('suit')),
-      card.get('isMoving') && 'isMoving'
+      colourForSuit(card.suit),
+      card.isMoving && 'isMoving'
     ].filter(e => e).join(' ');
 
     return (

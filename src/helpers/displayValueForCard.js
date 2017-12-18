@@ -1,5 +1,5 @@
 export default function displayValueForCard (card) {
-  const value = card.get('value');
+  const value = card.value;
   if (value === 1) {
     return 'A';
   } else if (value === 11) {
