@@ -2,7 +2,6 @@ import './Game.css';
 import React, { Component } from 'react';
 import { isEmpty, range } from 'ramda';
 import { is, List } from 'immutable';
-// import { is } from 'immutable';
 import Columns from 'components/Columns';
 import Piles from 'components/Piles';
 import serveNewCards from 'helpers/serveNewCards';
@@ -27,16 +26,12 @@ export default class Game extends Component {
   // Takes a List of cards and checks whether they have alternating colours (..,red,black,red,black,..)
   haveAlternatingColours (cards) {
     const colours = cards.map(card => colourForSuit(card.suit));
-    console.log('haveAlternatingColours', colours.toJS());
     let isAlternating = true;
     let previousColour = colours.first();
-    console.log('initial previousColour', previousColour);
     colours.rest().forEach(colour => {
-      console.log('loop', colour, previousColour, isAlternating, isAlternating && colour !== previousColour);
       isAlternating = isAlternating && colour !== previousColour;
       previousColour = colour;
     });
-    console.log('haveAlternatingColours', isAlternating);
     return isAlternating;
   }
 
@@ -45,9 +40,7 @@ export default class Game extends Component {
     const values = cards.map(card => card.value);
     const firstValue = cards.first().value;
     const lastValue = cards.last().value;
-    const rv = is(values, List(range(lastValue, firstValue + 1)).reverse());
-    console.log('haveDescendingValues', rv, values.toJS(), List(range(lastValue, firstValue + 1)).reverse().toJS());
-    return rv;
+    return is(values, List(range(lastValue, firstValue + 1)).reverse());
   }
 
   // Takes a column and a card and checks whether the card and its children are sorted (i.e. with alternating colours and descending values)."
@@ -55,14 +48,11 @@ export default class Game extends Component {
     const children = this.childrenOf(columnIndex, cardIndex);
 
     if (isEmpty(children)) {
-      console.log('hasMoveableChildren: NO children');
       return true; // the last card of the column is always moveable
     } else {
       const card = this.cardAt(columnIndex, cardIndex);
       const cards = List.of(card, ...children);
-      const rv = this.haveDescendingValues(cards) && this.haveAlternatingColours(cards);
-      console.log('hasMoveableChildren:', rv);
-      return rv;
+      return this.haveDescendingValues(cards) && this.haveAlternatingColours(cards);
     }
   }
 
@@ -74,7 +64,6 @@ export default class Game extends Component {
     const card = this.cardAt(columnIndex, cardIndex);
     if (!card) throw new Error(`isMoveable: cardIndex (${cardIndex}) is out of bounds for column number ${columnIndex}. Card is: ${JSON.stringify(card.toJS())}`);
 
-    console.log('isOpen', card.isOpen);
     return card.isOpen && this.hasMoveableChildren(columnIndex, cardIndex);
   }
 
@@ -87,7 +76,7 @@ export default class Game extends Component {
   }
 
   handleKeyDown = event => {
-    // 13 is the 'enter' key
+    // 'enter' key
     if (event.keyCode === 13) {
       this.handleServeNewCards();
     }
