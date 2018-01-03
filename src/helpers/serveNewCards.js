@@ -6,19 +6,14 @@ import colourForSuit from 'helpers/colourForSuit';
 const serveNewCardsToColumns = gameState => {
   const cardsToServe = min(TOTAL_COLUMNS, gameState.stack.size);
   const newGameState = range(0, cardsToServe).reduce((memo, columnIndex) => {
-    // TODO: find better name than `gameState`
     const daGameState = serveCardToColumn(memo, columnIndex);
 
     return daGameState
       .updateIn(['columns', columnIndex, 'moveableFromIndex'], moveableFromIndex => {
         const column = daGameState.columns.get(columnIndex);
         const nextToLastCard = column.cards.get(-2);
-        if (!nextToLastCard) {
-          console.log('XX', nextToLastCard, daGameState.get(['columns', columnIndex]));
-        }
         const lastCard = column.cards.last();
         const isLastCardInOrder = colourForSuit(lastCard.suit) !== colourForSuit(nextToLastCard.suit) && lastCard.value+1 === nextToLastCard.value;
-        console.log('isLastCardInOrder', columnIndex, isLastCardInOrder, lastCard.toJS(), nextToLastCard.toJS());
         return isLastCardInOrder ? moveableFromIndex : column.cards.size-1;
       });
   }, gameState);
