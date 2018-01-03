@@ -60,19 +60,16 @@ export default class Game extends Component {
     return this.state.gameState.columns.get(columnIndex).cards.get(cardIndex);
   }
 
-  isMoveable (columnIndex, cardIndex) {
+  checkMoveable = (columnIndex, cardIndex) => {
     const card = this.cardAt(columnIndex, cardIndex);
     if (!card) throw new Error(`isMoveable: cardIndex (${cardIndex}) is out of bounds for column number ${columnIndex}. Card is: ${JSON.stringify(card.toJS())}`);
 
+    console.log('isMoveable?', card.isOpen && this.hasMoveableChildren(columnIndex, cardIndex), columnIndex, 'x', cardIndex);
     return card.isOpen && this.hasMoveableChildren(columnIndex, cardIndex);
   }
 
   handleColumnCardClick = (cardIndex, columnIndex) => {
-    if (this.isMoveable(columnIndex, cardIndex)) {
-      console.log('YES', [columnIndex, cardIndex]);
-    } else {
-      console.log('NO', [columnIndex, cardIndex]);
-    }
+    this.checkMoveable(columnIndex, cardIndex);
   }
 
   handleKeyDown = event => {
@@ -91,7 +88,11 @@ export default class Game extends Component {
 
     return (
       <div className='Game'>
-        <Columns columns={gameState.columns} onCardClick={this.handleColumnCardClick} />
+        <Columns
+          checkMoveable={this.checkMoveable}
+          columns={gameState.columns}
+          onCardClick={this.handleColumnCardClick}
+        />
         <Piles onServeNewCards={this.handleServeNewCards} piles={gameState.piles} />
       </div>
     );
