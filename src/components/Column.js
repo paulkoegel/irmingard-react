@@ -7,22 +7,30 @@ export default class Column extends Component {
     return [deck, suit, value].join('.');
   }
 
-  render () {
-    const { checkMoveable, column, onCardClick } = this.props;
+  handleCardClick = cardIndex => () => {
+    const { column, onCardClick } = this.props;
+    onCardClick(cardIndex, column.index);
+  };
 
+  noOp () {}
+
+  render () {
+    const { column, checkMoveable, checkOpen } = this.props;
     return (
       <li className='Column'>
         <ul className='Column_cards'>
-          { column.cards.map((card, index) =>
-            <Card
+          { column.cards.map((card, cardIndex) => {
+            const isMoveable = checkMoveable(column.index, cardIndex);
+            return <Card
               card={card}
-              cardIndex={index}
-              checkMoveable={checkMoveable}
+              cardIndex={cardIndex}
               columnIndex={column.index}
-              isMoveable={checkMoveable(column.index, index)}
+              isMoveable={isMoveable}
+              isOpen={checkOpen(column.index, cardIndex)}
               key={this.idFor(card)}
-              onClick={onCardClick}
-            />
+              onClick={isMoveable ? this.handleCardClick(cardIndex) : this.noOp}
+            />;
+          }
           )}
         </ul>
       </li>

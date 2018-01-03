@@ -1,15 +1,33 @@
 import { min, pipe, range } from 'ramda';
-import { List } from 'immutable';
 import { serveCardToColumn, TOTAL_COLUMNS } from 'setup';
 import unmarkAllCards from 'helpers/unmarkAllCards';
+import colourForSuit from 'helpers/colourForSuit';
 
 const serveNewCardsToColumns = gameState => {
   const cardsToServe = min(TOTAL_COLUMNS, gameState.stack.size);
-  return List(range(0, cardsToServe)).reduce((memo, columnIndex) => {
-    return serveCardToColumn(memo, columnIndex, true);
+  const newGameState = range(0, cardsToServe).reduce((memo, columnIndex) => {
+    // TODO: find better name than `gameState`
+    const daGameState = serveCardToColumn(memo, columnIndex);
+
+    return daGameState
+      .updateIn(['columns', columnIndex, 'moveableFromIndex'], moveableFromIndex => {
+        const column = daGameState.columns.get(columnIndex);
+        const nextToLastCard = column.cards.get(-2);
+        if (!nextToLastCard) {
+          console.log('XX', nextToLastCard, daGameState.get(['columns', columnIndex]));
+        }
+        const lastCard = column.cards.last();
+        const isLastCardInOrder = colourForSuit(lastCard.suit) !== colourForSuit(nextToLastCard.suit) && lastCard.value+1 === nextToLastCard.value;
+        console.log('isLastCardInOrder', columnIndex, isLastCardInOrder, lastCard.toJS(), nextToLastCard.toJS());
+        return isLastCardInOrder ? moveableFromIndex : column.cards.size-1;
+      });
   }, gameState);
+  return newGameState;
 };
 
 export default function serveNewCards (gameState) {
-  return pipe(unmarkAllCards, serveNewCardsToColumns)(gameState);
+  return pipe(
+    unmarkAllCards,
+    serveNewCardsToColumns
+  )(gameState);
 }

@@ -9,8 +9,8 @@ export default class Card extends Component {
   }
 
   render () {
-    const { card, cardIndex, columnIndex, isMoveable, onClick } = this.props;
-    const { isMoving, isOpen, suit } = card;
+    const { card, cardIndex, columnIndex, isMoveable, isOpen, onClick } = this.props;
+    const { isMoving, suit } = card;
     const wrapperClassNames = ['Card',
       colourForSuit(suit),
       isMoving && 'isMoving',
