@@ -12,26 +12,30 @@ export default class Column extends Component {
     onCardClick(cardIndex, column.index);
   };
 
-  noOp () {}
+  checkMoveable (column, cardIndex) {
+    return cardIndex >= column.moveableFromIndex;
+  }
+
+  checkOpen (column, cardIndex) {
+    return cardIndex >= column.openFromIndex;
+  }
 
   render () {
-    const { column, checkMoveable, checkOpen } = this.props;
+    const { column } = this.props;
     return (
       <li className='Column'>
         <ul className='Column_cards'>
-          { column.cards.map((card, cardIndex) => {
-            const isMoveable = checkMoveable(column.index, cardIndex);
-            return <Card
+          { column.cards.map((card, cardIndex) => (
+            <Card
               card={card}
               cardIndex={cardIndex}
               columnIndex={column.index}
-              isMoveable={isMoveable}
-              isOpen={checkOpen(column.index, cardIndex)}
+              isMoveable={this.checkMoveable(column, cardIndex)}
+              isOpen={this.checkOpen(column, cardIndex)}
               key={this.idFor(card)}
-              onClick={isMoveable ? this.handleCardClick(cardIndex) : this.noOp}
-            />;
-          }
-          )}
+              onClick={this.handleCardClick(cardIndex)}
+            />
+          ))}
         </ul>
       </li>
     );

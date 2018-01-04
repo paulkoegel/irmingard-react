@@ -132,6 +132,21 @@ ul {
   background: #fafafa;
 }
 
+.Piles_info {
+  display: flex;
+  align-items: center;
+}
+
+.Piles_headline {
+  margin: 0 20px 0 0;
+}
+
+.Piles_note {
+  margin: 0;
+  font-size: 13px;
+  font-style: italic;
+}
+
 .Piles_list {
   list-style-type: none;
   display: flex;

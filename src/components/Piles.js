@@ -7,12 +7,14 @@ export default class Piles extends Component {
 
     return (
       <div className='Piles'>
-        <h3 className='Piles_headline'>
-          Discard Piles
-        </h3>
-        <p className='Piles_note'>
-          Start discarding aces here with a double click - then twos, threes, etc.
-        </p>
+        <div className='Piles_info'>
+          <h3 className='Piles_headline'>
+            Discard Piles
+          </h3>
+          <p className='Piles_note'>
+            Start discarding aces here with a double click - then twos, threes, etc.
+          </p>
+        </div>
 
         <ul className='Piles_list'>
           { this.props.piles.map((pile, index) => {

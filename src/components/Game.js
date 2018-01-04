@@ -24,18 +24,12 @@ export default class Game extends Component {
     return this.state.gameState.columns.get(columnIndex).cards.get(cardIndex);
   }
 
-  checkMoveable = (columnIndex, cardIndex) => {
-    const column = this.state.gameState.columns.get(columnIndex);
-    return cardIndex >= column.moveableFromIndex;
-  }
-
   checkOpen = (columnIndex, cardIndex) => {
     const column = this.state.gameState.columns.get(columnIndex);
     return cardIndex >= column.openFromIndex;
   }
 
   handleColumnCardClick = (cardIndex, columnIndex) => {
-    this.checkMoveable(columnIndex, cardIndex);
   }
 
   handleKeyDown = event => {
@@ -54,15 +48,14 @@ export default class Game extends Component {
 
     return (
       <div className='Game'>
-        <Columns
-          checkMoveable={this.checkMoveable}
-          checkOpen={this.checkOpen}
-          columns={gameState.columns}
-          onCardClick={this.handleColumnCardClick}
-        />
         <Piles
           onServeNewCards={this.handleServeNewCards}
           piles={gameState.piles}
+        />
+        <Columns
+          checkOpen={this.checkOpen}
+          columns={gameState.columns}
+          onCardClick={this.handleColumnCardClick}
         />
       </div>
     );

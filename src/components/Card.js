@@ -23,7 +23,9 @@ export default class Card extends Component {
         ? (
           <li
             className={wrapperClassNames}
-            onClick={() => { onClick(cardIndex, columnIndex); }}
+            onClick={() => {
+              isMoveable && onClick(cardIndex, columnIndex);
+            }}
           >
             <span>
               { this.labelFor(card) }
