@@ -99,7 +99,7 @@ const serveCards = gameState => {
 
 const GameStateRecord = Record({
   columns: null,
-  movingIndices: [],
+  movingCoordinates: [],
   piles: null,
   stack: null
 });

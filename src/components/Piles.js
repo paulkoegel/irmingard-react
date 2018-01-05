@@ -3,7 +3,7 @@ import Pile from './Pile';
 
 export default class Piles extends Component {
   render () {
-    const { onServeNewCards } = this.props;
+    const { onServeNewCards, piles } = this.props;
 
     return (
       <div className='Piles'>
@@ -17,7 +17,7 @@ export default class Piles extends Component {
         </div>
 
         <ul className='Piles_list'>
-          { this.props.piles.map((pile, index) => {
+          { piles.map((pile, index) => {
             return <Pile index={index} key={index} pile={pile} />;
           })}
           <li>

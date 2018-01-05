@@ -8,9 +8,17 @@ export default class Card extends Component {
     return `${symbolForSuit(card.suit)} ${displayValueForCard(card)}`;
   }
 
+  handleClick = () => {
+    const { cardIndex, columnIndex, isMoveable, onCardClick } = this.props;
+    if (isMoveable) {
+      onCardClick(columnIndex, cardIndex);
+    }
+  }
+
   render () {
-    const { card, cardIndex, columnIndex, isMoveable, isOpen, onClick } = this.props;
-    const { isMoving, suit } = card;
+    const { card, cardIndex, columnIndex, isMoveable, movingCoordinates, isOpen } = this.props;
+    const { suit } = card;
+    const isMoving = columnIndex === movingCoordinates[0] && cardIndex >= movingCoordinates[1];
     const wrapperClassNames = ['Card',
       colourForSuit(suit),
       isMoving && 'isMoving',
@@ -23,9 +31,7 @@ export default class Card extends Component {
         ? (
           <li
             className={wrapperClassNames}
-            onClick={() => {
-              isMoveable && onClick(cardIndex, columnIndex);
-            }}
+            onClick={this.handleClick}
           >
             <span>
               { this.labelFor(card) }

@@ -29,7 +29,13 @@ export default class Game extends Component {
     return cardIndex >= column.openFromIndex;
   }
 
-  handleColumnCardClick = (cardIndex, columnIndex) => {
+  handleColumnCardClick = (columnIndex, cardIndex) => {
+    this.setState(state => (
+      {
+        gameState: state.gameState.merge({
+          movingCoordinates: [columnIndex, cardIndex]
+        })
+      }));
   }
 
   handleKeyDown = event => {
@@ -40,7 +46,10 @@ export default class Game extends Component {
   };
 
   handleServeNewCards = () => {
-    this.setState(state => ({ gameState: serveNewCards(state.gameState) }));
+    this.setState(state => (
+      {
+        gameState: serveNewCards(state.gameState)
+      }));
   };
 
   render () {
@@ -56,6 +65,7 @@ export default class Game extends Component {
           checkOpen={this.checkOpen}
           columns={gameState.columns}
           onCardClick={this.handleColumnCardClick}
+          movingCoordinates={gameState.movingCoordinates}
         />
       </div>
     );

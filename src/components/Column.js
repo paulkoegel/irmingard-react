@@ -21,7 +21,7 @@ export default class Column extends Component {
   }
 
   render () {
-    const { column } = this.props;
+    const { column, movingCoordinates, onCardClick } = this.props;
     return (
       <li className='Column'>
         <ul className='Column_cards'>
@@ -33,7 +33,8 @@ export default class Column extends Component {
               isMoveable={this.checkMoveable(column, cardIndex)}
               isOpen={this.checkOpen(column, cardIndex)}
               key={this.idFor(card)}
-              onClick={this.handleCardClick(cardIndex)}
+              movingCoordinates={movingCoordinates}
+              onCardClick={onCardClick}
             />
           ))}
         </ul>
