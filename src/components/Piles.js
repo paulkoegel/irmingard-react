@@ -3,7 +3,7 @@ import Pile from './Pile';
 
 export default class Piles extends Component {
   render () {
-    const { onPileCardClick, onServeNewCards, movingCoordinates, piles } = this.props;
+    const { hasCardsOnStack, onPileCardClick, onServeNewCards, movingCoordinates, piles } = this.props;
 
     return (
       <div className='Piles'>
@@ -26,7 +26,9 @@ export default class Piles extends Component {
             />
           ))}
           <li>
-            <button onClick={onServeNewCards}>
+            <button
+              disabled={!hasCardsOnStack}
+              onClick={onServeNewCards}>
               Serve cards
             </button>
           </li>

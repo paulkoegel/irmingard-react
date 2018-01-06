@@ -149,6 +149,7 @@ export default class Game extends Component {
     return (
       <div className='Game'>
         <Piles
+          hasCardsOnStack={gameState.stack.size > 0}
           movingCoordinates={gameState.movingCoordinates}
           onPileCardClick={this.handlePileCardClick}
           onServeNewCards={this.handleServeNewCards}
