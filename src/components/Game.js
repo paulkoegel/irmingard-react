@@ -1,15 +1,15 @@
-import './Game.css';
 import React, { Component } from 'react';
 import Columns from 'components/Columns';
+import './Game.css';
 import Piles from 'components/Piles';
 import serveNewCards from 'helpers/serveNewCards';
-import { newGameState } from 'setup';
+import { newGameState, TOTAL_COLUMNS } from 'setup';
 
 export default class Game extends Component {
   state = {
     // "Note that state must be a plain JS object, and not an Immutable collection, because React's setState API expects an object literal and will merge it (Object.assign) with the previous state." (https://github.com/facebook/immutable-js/wiki/Immutable-as-React-state)
     gameState: newGameState()
-  };
+  }
 
   componentDidMount () {
     window.onkeydown = this.handleKeyDown;
@@ -29,13 +29,57 @@ export default class Game extends Component {
     return cardIndex >= column.openFromIndex;
   }
 
+  discardToPile (columnIndex, cardIndex) {
+    const gameState = this.state.gameState;
+    const card = gameState.columns.get(columnIndex).cards.get(cardIndex);
+    const pileIndex = this.freePileFor(card).index;
+
+    this.setState(state => ({
+      gameState: gameState
+        .updateIn(['piles', pileIndex, 'cards'], cards => cards.push(card))
+        .updateIn(['columns', columnIndex, 'cards'], cards => cards.pop())
+        // TODO: update `openFromIndex` in column
+    }));
+  }
+
+  freePileFor (card) {
+    return this.state.gameState.piles.find(pile => {
+      return pile.suit === card.suit && pile.cards.size === card.value-1;
+    });
+  }
+
+  isDiscardable (columnIndex, cardIndex) {
+    const column = this.state.gameState.columns.get(columnIndex);
+    const isLastCardOfColumn = cardIndex === column.cards.size-1;
+    const card = column.cards.get(cardIndex);
+    const pile = this.freePileFor(card);
+
+    return isLastCardOfColumn && pile;
+  }
+
   handleColumnCardClick = (columnIndex, cardIndex) => {
-    this.setState(state => (
-      {
-        gameState: state.gameState.merge({
-          movingCoordinates: [columnIndex, cardIndex]
-        })
-      }));
+    const { movingCoordinates: [previousColumnIndex, previousCardIndex] } = this.state.gameState;
+    console.log('handleColumnCardClick', columnIndex, previousColumnIndex, cardIndex, previousCardIndex);
+    if (columnIndex === previousColumnIndex && cardIndex === previousCardIndex) {
+      if (this.isDiscardable(columnIndex, cardIndex)) {
+        this.discardToPile(columnIndex, cardIndex);
+      } else {
+        this.setState(state => (
+          {
+            gameState: state.gameState.merge({
+              movingCoordinates: []
+            })
+          }));
+      }
+    } else {
+      // mark new card & its potential children
+      this.setState(state => (
+        {
+          gameState: state.gameState.merge({
+            movingCoordinates: [columnIndex, cardIndex]
+          })
+        }));
+    }
   }
 
   handleKeyDown = event => {
@@ -43,14 +87,26 @@ export default class Game extends Component {
     if (event.keyCode === 13) {
       this.handleServeNewCards();
     }
-  };
+  }
 
   handleServeNewCards = () => {
     this.setState(state => (
       {
         gameState: serveNewCards(state.gameState)
-      }));
-  };
+      }
+    ));
+  }
+
+  handlePileCardClick = (pileIndex) => {
+    const cardIndex = this.state.gameState.piles.get(pileIndex).cards.size-1;
+    this.setState(state => (
+      {
+        gameState: state.gameState.merge({
+          movingCoordinates: [TOTAL_COLUMNS + pileIndex, cardIndex]
+        })
+      }
+    ));
+  }
 
   render () {
     const { gameState } = this.state;
@@ -58,6 +114,8 @@ export default class Game extends Component {
     return (
       <div className='Game'>
         <Piles
+          movingCoordinates={gameState.movingCoordinates}
+          onPileCardClick={this.handlePileCardClick}
           onServeNewCards={this.handleServeNewCards}
           piles={gameState.piles}
         />

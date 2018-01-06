@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import colourForSuit from 'helpers/colourForSuit';
 import displayValueForCard from 'helpers/displayValueForCard';
 import symbolForSuit from 'helpers/symbolForSuit';
+import { TOTAL_COLUMNS } from 'setup';
 
 export default class Card extends Component {
   labelFor (card) {
@@ -9,25 +10,31 @@ export default class Card extends Component {
   }
 
   handleClick = () => {
-    const { cardIndex, columnIndex, isMoveable, onCardClick } = this.props;
-    if (isMoveable) {
+    // TODO: ensure that pile click events get fired
+    // TODO: perhaps move the logic here to game.js!?
+    const { cardIndex, columnIndex, isMoveable, onCardClick, pileIndex } = this.props;
+    if (isMoveable || pileIndex) {
       onCardClick(columnIndex, cardIndex);
     }
   }
 
   render () {
-    const { card, cardIndex, columnIndex, isMoveable, movingCoordinates, isOpen } = this.props;
+    const { card, cardIndex, columnIndex, isMoveable, isOpen, movingCoordinates, pileIndex } = this.props;
     const { suit } = card;
-    const isMoving = columnIndex === movingCoordinates[0] && cardIndex >= movingCoordinates[1];
+    const isMoving =
+      (columnIndex === movingCoordinates[0] && cardIndex >= movingCoordinates[1]) ||
+      (pileIndex === movingCoordinates[0] - TOTAL_COLUMNS);
+    pileIndex && console.log('card', pileIndex, movingCoordinates, TOTAL_COLUMNS);
     const wrapperClassNames = ['Card',
       colourForSuit(suit),
+      (pileIndex !== undefined) && 'isOnPile',
       isMoving && 'isMoving',
       isMoveable && 'isMoveable',
       'isOpen'
     ].filter(e => e).join(' ');
 
     return (
-      isOpen
+      isOpen || pileIndex !== undefined // pileIndex can be 0 (which is falsy in JavaScript)
         ? (
           <li
             className={wrapperClassNames}
