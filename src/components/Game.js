@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Columns from 'components/Columns';
 import './Game.css';
 import Piles from 'components/Piles';
+import colourForSuit from 'helpers/colourForSuit';
 import serveNewCards from 'helpers/serveNewCards';
 import { newGameState, TOTAL_COLUMNS } from 'setup';
 
@@ -24,6 +25,32 @@ export default class Game extends Component {
     return this.state.gameState.columns.get(columnIndex).cards.get(cardIndex);
   }
 
+  checkMoveableFromIndex (columnIndex) {
+    const column = this.state.gameState.columns.get(columnIndex);
+    const cards = column.cards;
+
+    if (cards.size === 0) {
+      return null;
+    } else if (cards.size === 1) {
+      return 0;
+    } else {
+      let numberOfMoveableCards = 0;
+
+      for (let i = cards.size-1; i >= 0; i--) {
+        const card = cards.get(i);
+        const cardAbove = cards.get(i-1);
+        if (card.value === cardAbove.value-1 && colourForSuit(card.suit) !== colourForSuit(cardAbove.suit)) {
+          numberOfMoveableCards++;
+        } else {
+          break;
+        }
+      }
+
+      const moveableFromIndex = (cards.size - 1) - numberOfMoveableCards;
+      return moveableFromIndex;
+    }
+  }
+
   checkOpen = (columnIndex, cardIndex) => {
     const column = this.state.gameState.columns.get(columnIndex);
     return cardIndex >= column.openFromIndex;
@@ -39,6 +66,12 @@ export default class Game extends Component {
         .updateIn(['piles', pileIndex, 'cards'], cards => cards.push(card))
         .updateIn(['columns', columnIndex, 'cards'], cards => cards.pop())
         // TODO: update `openFromIndex` in column
+        .updateIn(['columns', columnIndex], column => column.merge({
+          // moveableFromIndex: this.checkMoveableFromIndex(columnIndex),
+          openFromIndex: column.openFromIndex === 0
+            ? null
+            : column.openFromIndex >= column.cards.size ? column.openFromIndex - 1 : column.openFromIndex
+        }))
     }));
   }
 
@@ -51,6 +84,7 @@ export default class Game extends Component {
   isDiscardable (columnIndex, cardIndex) {
     const column = this.state.gameState.columns.get(columnIndex);
     const isLastCardOfColumn = cardIndex === column.cards.size-1;
+
     const card = column.cards.get(cardIndex);
     const pile = this.freePileFor(card);
 
@@ -59,7 +93,6 @@ export default class Game extends Component {
 
   handleColumnCardClick = (columnIndex, cardIndex) => {
     const { movingCoordinates: [previousColumnIndex, previousCardIndex] } = this.state.gameState;
-    console.log('handleColumnCardClick', columnIndex, previousColumnIndex, cardIndex, previousCardIndex);
     if (columnIndex === previousColumnIndex && cardIndex === previousCardIndex) {
       if (this.isDiscardable(columnIndex, cardIndex)) {
         this.discardToPile(columnIndex, cardIndex);
@@ -89,15 +122,7 @@ export default class Game extends Component {
     }
   }
 
-  handleServeNewCards = () => {
-    this.setState(state => (
-      {
-        gameState: serveNewCards(state.gameState)
-      }
-    ));
-  }
-
-  handlePileCardClick = (pileIndex) => {
+  handlePileCardClick = (pileIndex, _cardIndex) => {
     const cardIndex = this.state.gameState.piles.get(pileIndex).cards.size-1;
     this.setState(state => (
       {
@@ -106,6 +131,16 @@ export default class Game extends Component {
         })
       }
     ));
+  }
+
+  handleServeNewCards = () => {
+    if (this.state.gameState.stack.size > 0) {
+      this.setState(state => (
+        {
+          gameState: serveNewCards(state.gameState)
+        }
+      ));
+    }
   }
 
   render () {
@@ -122,7 +157,7 @@ export default class Game extends Component {
         <Columns
           checkOpen={this.checkOpen}
           columns={gameState.columns}
-          onCardClick={this.handleColumnCardClick}
+          onColumnCardClick={this.handleColumnCardClick}
           movingCoordinates={gameState.movingCoordinates}
         />
       </div>

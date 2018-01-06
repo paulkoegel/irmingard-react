@@ -10,16 +10,23 @@ export default class Card extends Component {
   }
 
   handleClick = () => {
-    // TODO: ensure that pile click events get fired
-    // TODO: perhaps move the logic here to game.js!?
     const { cardIndex, columnIndex, isMoveable, onCardClick, pileIndex } = this.props;
-    if (isMoveable || pileIndex) {
-      onCardClick(columnIndex, cardIndex);
+
+    if (isMoveable || pileIndex !== undefined) {
+      const columnOrPileIndex = columnIndex !== undefined ? columnIndex : pileIndex; // cannot use `||` because 0 is falsy
+      onCardClick(columnOrPileIndex, cardIndex);
     }
   }
 
   render () {
-    const { card, cardIndex, columnIndex, isMoveable, isOpen, movingCoordinates, pileIndex } = this.props;
+    const {
+      card,
+      cardIndex,
+      columnIndex,
+      isMoveable,
+      isOpen,
+      movingCoordinates,
+      pileIndex } = this.props;
     const { suit } = card;
     const isMoving =
       (columnIndex === movingCoordinates[0] && cardIndex >= movingCoordinates[1]) ||
@@ -27,7 +34,7 @@ export default class Card extends Component {
     pileIndex && console.log('card', pileIndex, movingCoordinates, TOTAL_COLUMNS);
     const wrapperClassNames = ['Card',
       colourForSuit(suit),
-      (pileIndex !== undefined) && 'isOnPile',
+      (pileIndex !== undefined) && 'isOnPile', // pileIndex can be 0 (which is falsy in JavaScript)
       isMoving && 'isMoving',
       isMoveable && 'isMoveable',
       'isOpen'

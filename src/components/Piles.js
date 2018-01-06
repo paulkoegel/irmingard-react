@@ -21,7 +21,7 @@ export default class Piles extends Component {
             <Pile
               key={index}
               movingCoordinates={movingCoordinates}
-              onPilecardClick={onPileCardClick}
+              onPileCardClick={onPileCardClick}
               pile={pile}
             />
           ))}

@@ -3,7 +3,7 @@ import Column from './Column';
 
 export default class Columns extends Component {
   render () {
-    const { columns, movingCoordinates, onCardClick } = this.props;
+    const { columns, movingCoordinates, onColumnCardClick } = this.props;
 
     return (
       <ul className='Columns'>
@@ -12,7 +12,7 @@ export default class Columns extends Component {
             column={column}
             key={index}
             movingCoordinates={movingCoordinates}
-            onCardClick={onCardClick}
+            onColumnCardClick={onColumnCardClick}
           />
         ))}
       </ul>
