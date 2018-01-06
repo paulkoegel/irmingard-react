@@ -25,8 +25,7 @@ export default class Game extends Component {
     return this.state.gameState.columns.get(columnIndex).cards.get(cardIndex);
   }
 
-  checkMoveableFromIndex (columnIndex) {
-    const column = this.state.gameState.columns.get(columnIndex);
+  checkMoveableFromIndex (column) {
     const cards = column.cards;
 
     if (cards.size === 0) {
@@ -65,9 +64,8 @@ export default class Game extends Component {
       gameState: gameState
         .updateIn(['piles', pileIndex, 'cards'], cards => cards.push(card))
         .updateIn(['columns', columnIndex, 'cards'], cards => cards.pop())
-        // TODO: update `openFromIndex` in column
         .updateIn(['columns', columnIndex], column => column.merge({
-          // moveableFromIndex: this.checkMoveableFromIndex(columnIndex),
+          moveableFromIndex: this.checkMoveableFromIndex(column),
           openFromIndex: column.openFromIndex === 0
             ? null
             : column.openFromIndex >= column.cards.size ? column.openFromIndex - 1 : column.openFromIndex
