@@ -31,7 +31,6 @@ export default class Card extends Component {
     const isMoving =
       (columnIndex === movingCoordinates[0] && cardIndex >= movingCoordinates[1]) ||
       (pileIndex === movingCoordinates[0] - TOTAL_COLUMNS);
-    pileIndex && console.log('card', pileIndex, movingCoordinates, TOTAL_COLUMNS);
     const wrapperClassNames = ['Card',
       colourForSuit(suit),
       (pileIndex !== undefined) && 'isOnPile', // pileIndex can be 0 (which is falsy in JavaScript)
