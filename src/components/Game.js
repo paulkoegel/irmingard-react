@@ -14,7 +14,7 @@ export default class Game extends Component {
 
   componentDidMount () {
     window.onkeydown = this.handleKeyDown;
-    window.gameState = this.state.gameState;
+    window.gameState = () => this.state.gameState;
   }
 
   childrenOf (columnIndex, cardIndex) {
@@ -147,6 +147,9 @@ export default class Game extends Component {
 
     return (
       <div className='Game'>
+        <p style={{ fontSize: 5, wordWrap: 'break-word', height: 40 }}>
+          {window.encodeGameState(this.state.gameState)}
+        </p>
         <Piles
           hasCardsOnStack={gameState.stack.size > 0}
           movingCoordinates={gameState.movingCoordinates}

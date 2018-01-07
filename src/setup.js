@@ -13,7 +13,7 @@ const SUITS = List.of(
 const DOUBLE_SUITS = fromJS(flatMap(suit => [suit, suit], SUITS));
 const INITIAL_CARD_COUNTS_PER_COLUMN = [1, 2, 3, 4, 5, 4, 3, 2, 1];
 
-const CardRecord = Record({
+export const CardRecord = Record({
   deck: null,
   suit: null,
   value: null
@@ -42,7 +42,7 @@ const makeShuffledStack = () => {
   return immutableShuffle(stack);
 };
 
-const ColumnRecord = Record({
+export const ColumnRecord = Record({
   cards: List(),
   index: null,
   moveableFromIndex: 0,
@@ -55,7 +55,7 @@ const makeColumns = () => {
   );
 };
 
-const PileRecord = Record({
+export const PileRecord = Record({
   cards: List(),
   index: null,
   suit: null
@@ -97,7 +97,7 @@ const serveCards = gameState => {
   }, gameState);
 };
 
-const GameStateRecord = Record({
+export const GameStateRecord = Record({
   columns: null,
   movingCoordinates: [],
   piles: null,

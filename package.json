@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "immutable": "^4.0.0-rc.9",
+    "lz-string": "^1.4.4",
     "ramda": "^0.25.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
