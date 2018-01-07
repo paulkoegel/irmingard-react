@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import Game from 'components/Game';
 import registerServiceWorker from './registerServiceWorker';
-import { List } from 'immutable';
 
 ReactDOM.render(<Game />, document.getElementById('root'));
 registerServiceWorker();
