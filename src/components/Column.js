@@ -1,12 +1,8 @@
 import React, { Component } from 'react';
 import Card from './Card';
+import cardId from 'helpers/cardId';
 
 export default class Column extends Component {
-  idFor (card) {
-    const { deck, suit, value } = card;
-    return [deck, suit, value].join('.');
-  }
-
   handleCardClick = cardIndex => () => {
     const { column, onCardClick } = this.props;
     onCardClick(cardIndex, column.index);
@@ -32,7 +28,7 @@ export default class Column extends Component {
               columnIndex={column.index}
               isMoveable={this.checkMoveable(column, cardIndex)}
               isOpen={this.checkOpen(column, cardIndex)}
-              key={this.idFor(card)}
+              key={cardId(card)}
               movingCoordinates={movingCoordinates}
               onCardClick={onColumnCardClick}
             />

@@ -13,7 +13,8 @@ const serveNewCardsToColumns = gameState => {
         const column = daGameState.columns.get(columnIndex);
         const nextToLastCard = column.cards.get(-2);
         const lastCard = column.cards.last();
-        const isLastCardInOrder = colourForSuit(lastCard.suit) !== colourForSuit(nextToLastCard.suit) && lastCard.value+1 === nextToLastCard.value;
+        const isLastCardInOrder = !nextToLastCard ||
+          (colourForSuit(lastCard.suit) !== colourForSuit(nextToLastCard.suit) && lastCard.value+1 === nextToLastCard.value);
         return isLastCardInOrder ? moveableFromIndex : column.cards.size-1;
       });
   }, gameState);

@@ -9,11 +9,12 @@ import { newGameState, TOTAL_COLUMNS } from 'setup';
 export default class Game extends Component {
   state = {
     // "Note that state must be a plain JS object, and not an Immutable collection, because React's setState API expects an object literal and will merge it (Object.assign) with the previous state." (https://github.com/facebook/immutable-js/wiki/Immutable-as-React-state)
-    gameState: newGameState()
+    gameState: this.props.gameState || newGameState()
   }
 
   componentDidMount () {
     window.onkeydown = this.handleKeyDown;
+    window.gameState = this.state.gameState;
   }
 
   childrenOf (columnIndex, cardIndex) {
