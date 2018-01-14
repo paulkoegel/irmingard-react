@@ -14,7 +14,7 @@ export default class Card extends Component {
 
     if (isMoveable || pileIndex !== undefined) {
       const columnOrPileIndex = columnIndex !== undefined ? columnIndex : pileIndex; // cannot use `||` because 0 is falsy
-      onCardClick(columnOrPileIndex, cardIndex);
+      onCardClick(columnOrPileIndex, cardIndex); // onCardClick knows whether it's a column or a pile index
     }
   }
 
