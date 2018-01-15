@@ -1,3 +1,5 @@
+import { CardRecord } from 'setup';
+
 export default function restoreFromShortCardId (shortCardId) {
   const match = /([cdhs])(\d+)([ab])/.exec(shortCardId);
   const shortSuit = match[1];
@@ -18,9 +20,9 @@ export default function restoreFromShortCardId (shortCardId) {
   const value = parseInt(match[2], 10);
   const deck = match[3];
 
-  return {
+  return new CardRecord({
     deck,
     suit,
     value
-  };
+  });
 }

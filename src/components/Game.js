@@ -17,8 +17,8 @@ export default class Game extends Component {
     window.gameState = () => this.state.gameState;
   }
 
-  canBePlacedBelow (cardAbove, cardBelow) {
-    if (!cardAbove || !cardBelow) return;
+  canBePlacedBelow (cardBelow, cardAbove) {
+    if (!cardBelow || !cardAbove) return;
     return cardBelow.value === cardAbove.value-1 && colourForSuit(cardBelow.suit) !== colourForSuit(cardAbove.suit);
   }
 
@@ -31,27 +31,33 @@ export default class Game extends Component {
     return gameState.columns.get(columnIndex).cards.skipUntil((e, i) => i > cardIndex);
   }
 
-  checkMoveableFromIndex (column) {
+  calculateMoveableFromIndex (column) {
+    // TODO: must respect openFromIndex!
     const cards = column.cards;
+    const openCardsCount = cards.size - column.openFromIndex;
 
     if (cards.size === 0) {
       return null;
-    } else if (cards.size === 1) {
-      return 0;
+    } else if (openCardsCount === 1) { // last card is always moveable; can be below closed cards
+      return column.openFromIndex;
     } else {
-      let numberOfMoveableCards = 0;
+      let numberOfMoveableCards = 1;
 
-      for (let i = cards.size-1; i >= 0; i--) {
+      for (let i = cards.size-1; i >= cards.size - openCardsCount; i--) {
         const card = cards.get(i);
         const cardAbove = cards.get(i-1);
+        console.log(card.toJS(), cardAbove.toJS(), this.canBePlacedBelow(card, cardAbove));
         if (this.canBePlacedBelow(card, cardAbove)) {
+          console.log('canBePlacedBelow');
           numberOfMoveableCards++;
         } else {
+          console.log('break');
           break;
         }
       }
+      console.log(cards.size, openCardsCount, numberOfMoveableCards, cards.size-1-numberOfMoveableCards);
 
-      const moveableFromIndex = (cards.size - 1) - numberOfMoveableCards;
+      const moveableFromIndex = cards.size - numberOfMoveableCards;
       return moveableFromIndex;
     }
   }
@@ -63,15 +69,15 @@ export default class Game extends Component {
 
   discardToPile (columnIndex, cardIndex) {
     const gameState = this.state.gameState;
-    const card = gameState.columns.get(columnIndex).cards.get(cardIndex);
-    const pileIndex = this.freePileFor(card).index;
+    const cardToDiscard = gameState.columns.get(columnIndex).cards.get(cardIndex);
+    const targetPileIndex = this.freePileFor(cardToDiscard).index;
 
     this.setState(state => ({
       gameState: gameState
-        .updateIn(['piles', pileIndex, 'cards'], cards => cards.push(card))
+        .updateIn(['piles', targetPileIndex, 'cards'], cards => cards.push(cardToDiscard))
         .updateIn(['columns', columnIndex, 'cards'], cards => cards.pop())
         .updateIn(['columns', columnIndex], column => column.merge({
-          moveableFromIndex: this.checkMoveableFromIndex(column),
+          moveableFromIndex: this.calculateMoveableFromIndex(column),
           openFromIndex: column.openFromIndex === 0
             ? null
             : column.openFromIndex >= column.cards.size ? column.openFromIndex - 1 : column.openFromIndex
@@ -97,6 +103,7 @@ export default class Game extends Component {
 
   handleColumnCardClick = (columnIndex, cardIndex) => {
     const { movingCoordinates: [previousColumnIndex, previousCardIndex] } = this.state.gameState;
+    console.log(this.state.gameState.movingCoordinates, previousColumnIndex, previousCardIndex);
     // double click
     if (columnIndex === previousColumnIndex && cardIndex === previousCardIndex) {
       if (this.isDiscardable(columnIndex, cardIndex)) {
@@ -111,8 +118,9 @@ export default class Game extends Component {
         ));
       }
     } else { // single click
-      if (previousColumnIndex && previousCardIndex) { // try to move previously marked cards below the currently marked one
-        if (this.canBePlacedBelow(this.cardAt(columnIndex, cardIndex), this.cardAt(previousColumnIndex, previousCardIndex))) {
+      console.log('single click');
+      if (previousColumnIndex !== undefined && previousCardIndex !== undefined) { // try to move previously marked cards below the currently marked one; 0 is falsy...
+        if (this.canBePlacedBelow(this.cardAt(previousColumnIndex, previousCardIndex), this.cardAt(columnIndex, cardIndex))) {
           // DONE - move marked cards to target
           // DONE - unmark all cards
           this.setState(state => {
@@ -125,7 +133,7 @@ export default class Game extends Component {
                 .updateIn(['columns', previousColumnIndex, 'cards'], cards => cards.splice(previousCardIndex))
                 .updateIn(['columns', previousColumnIndex], column =>
                   column.merge({
-                    moveableFromIndex: this.checkMoveableFromIndex(column),
+                    moveableFromIndex: this.calculateMoveableFromIndex(column),
                     openFromIndex: column.openFromIndex === 0
                       ? null
                       : column.openFromIndex >= column.cards.size ? column.openFromIndex - 1 : column.openFromIndex
