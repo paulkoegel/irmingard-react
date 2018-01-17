@@ -14,7 +14,6 @@ const DOUBLE_SUITS = fromJS(flatMap(suit => [suit, suit], SUITS));
 const INITIAL_CARD_COUNTS_PER_COLUMN = [1, 2, 3, 4, 5, 4, 3, 2, 1];
 
 export const CardRecord = Record({
-  deck: null,
   suit: null,
   value: null
 });
@@ -23,12 +22,10 @@ const makeCardsForSuit = suit => {
   return List(flatMap(
     value => [
       new CardRecord({
-        deck: 'a',
         suit,
         value
       }),
       new CardRecord({
-        deck: 'b',
         suit,
         value
       })

@@ -18,10 +18,8 @@ export default function restoreFromShortCardId (shortCardId) {
     }
   })();
   const value = parseInt(match[2], 10);
-  const deck = match[3];
 
   return new CardRecord({
-    deck,
     suit,
     value
   });
