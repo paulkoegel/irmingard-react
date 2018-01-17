@@ -36,9 +36,22 @@ export default class Game extends Component {
     return cardBelow.value === cardAbove.value-1 && colourForSuit(cardBelow.suit) !== colourForSuit(cardAbove.suit);
   }
 
-  cardAt (columnIndex, cardIndex) {
+  cardAt (columnOrPileIndex, cardIndex) {
+    if (columnOrPileIndex <= TOTAL_COLUMNS-1) {
+      return this.cardAtColumn(columnOrPileIndex, cardIndex);
+    } else {
+      return this.cardAtPile(columnOrPileIndex, cardIndex);
+    }
+  }
+
+  cardAtColumn (columnIndex, cardIndex) {
     const column = this.state.gameState.columns.get(columnIndex);
     return column ? column.cards.get(cardIndex) : null;
+  }
+
+  cardAtPile (pileIndex, cardIndex) {
+    const pile = this.state.gameState.piles.get(pileIndex - TOTAL_COLUMNS);
+    return pile ? pile.cards.get(cardIndex) : null;
   }
 
   childrenOf (columnIndex, cardIndex) {
@@ -112,9 +125,9 @@ export default class Game extends Component {
   }
 
   handleColumnCardClick = (columnIndex, cardIndex) => {
-    const { markedCardCoordinates: [previousColumnIndex, previousCardIndex] } = this.state.gameState;
+    const { markedCardCoordinates: [previousColumnOrPileIndex, previousCardIndex] } = this.state.gameState;
     // double click
-    if (columnIndex === previousColumnIndex && cardIndex === previousCardIndex) {
+    if (columnIndex === previousColumnOrPileIndex && cardIndex === previousCardIndex) {
       if (this.isDiscardable(columnIndex, cardIndex)) {
         this.discardToPile(columnIndex, cardIndex);
       } else {
@@ -127,28 +140,46 @@ export default class Game extends Component {
         ));
       }
     } else { // single click
-      if (previousColumnIndex !== undefined && previousCardIndex !== undefined) { // try to move previously marked cards below the currently marked one; 0 is falsy...
-        if (this.canBePlacedBelow(this.cardAt(previousColumnIndex, previousCardIndex), this.cardAt(columnIndex, cardIndex))) {
-          this.setState(state => {
-            const cardsToMove = state.gameState.columns.get(previousColumnIndex).cards.splice(0, previousCardIndex);
-            return {
-              gameState: state.gameState
-                .merge({
-                  markedCardCoordinates: []
-                })
-                .updateIn(['columns', previousColumnIndex, 'cards'], cards => cards.splice(previousCardIndex))
-                .updateIn(['columns', previousColumnIndex], column =>
-                  column.merge({
-                    moveableFromIndex: this.calculateMoveableFromIndex(column),
-                    openFromIndex: column.openFromIndex === 0
-                      ? null
-                      : column.openFromIndex >= column.cards.size ? column.openFromIndex - 1 : column.openFromIndex
+      console.log('else', previousColumnOrPileIndex, columnIndex, previousCardIndex, cardIndex);
+      if (previousColumnOrPileIndex !== undefined && previousCardIndex !== undefined) { // try to move previously marked cards below the currently marked one; 0 is falsy...
+        const cardToMove = this.cardAt(previousColumnOrPileIndex, previousCardIndex);
+        if (this.canBePlacedBelow(cardToMove, this.cardAt(columnIndex, cardIndex))) {
+          // TODO: can we unify this and remove the `if` distinguishing comlum-column from pile-column moves?
+          // move card from column to column
+          if (previousColumnOrPileIndex <= TOTAL_COLUMNS-1) {
+            this.setState(state => {
+              const cardsToMove = state.gameState.columns.get(previousColumnOrPileIndex).cards.splice(0, previousCardIndex);
+              return {
+                gameState: state.gameState
+                  .merge({
+                    markedCardCoordinates: []
                   })
-                )
-                .updateIn(['columns', columnIndex, 'cards'], cards =>
-                  cards.concat(cardsToMove))
-            };
-          });
+                  .updateIn(['columns', previousColumnOrPileIndex, 'cards'], cards => cards.splice(previousCardIndex))
+                  .updateIn(['columns', previousColumnOrPileIndex], column =>
+                    column.merge({
+                      moveableFromIndex: this.calculateMoveableFromIndex(column),
+                      openFromIndex: column.openFromIndex === 0
+                        ? null
+                        : column.openFromIndex >= column.cards.size ? column.openFromIndex - 1 : column.openFromIndex
+                    })
+                  )
+                  .updateIn(['columns', columnIndex, 'cards'], cards =>
+                    cards.concat(cardsToMove))
+              };
+            });
+          } else { // move card from pile to column
+            this.setState(state => {
+              return {
+                gameState: state.gameState
+                  .merge({
+                    markedCardCoordinates: []
+                  })
+                  .updateIn(['piles', (previousColumnOrPileIndex-TOTAL_COLUMNS), 'cards'], cards => cards.pop())
+                  .updateIn(['columns', columnIndex, 'cards'], cards =>
+                    cards.push(cardToMove))
+              };
+            });
+          }
         } else {
           this.setState(state => (
             {
