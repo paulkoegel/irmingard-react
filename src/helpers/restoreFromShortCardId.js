@@ -1,7 +1,7 @@
 import { CardRecord } from 'setup';
 
 export default function restoreFromShortCardId (shortCardId) {
-  const match = /([cdhs])(\d+)([ab])/.exec(shortCardId);
+  const match = /([cdhs])(\d+)/.exec(shortCardId);
   const shortSuit = match[1];
   const suit = (() => {
     switch (shortSuit) {
