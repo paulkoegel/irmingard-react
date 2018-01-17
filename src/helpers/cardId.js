@@ -1,4 +1,4 @@
 export default function cardId (card) {
-  const { suit, value } = card;
-  return [suit, value].join('.');
+  const { deck, suit, value } = card;
+  return [deck, suit, value].join('.');
 }
