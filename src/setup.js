@@ -5,10 +5,10 @@ import immutableShuffle from './helpers/shuffle';
 // constants
 export const TOTAL_COLUMNS = 9;
 const SUITS = List.of(
-  'clubs',
-  'diamonds',
   'hearts',
-  'spades'
+  'spades',
+  'diamonds',
+  'clubs'
 );
 const DOUBLE_SUITS = fromJS(flatMap(suit => [suit, suit], SUITS));
 const INITIAL_CARD_COUNTS_PER_COLUMN = [1, 2, 3, 4, 5, 4, 3, 2, 1];

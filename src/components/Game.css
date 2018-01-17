@@ -130,6 +130,10 @@ ul {
   cursor: pointer;
 }
 
+.Card.isOnPile.Pile_placeholder {
+  cursor: default;
+}
+
 .m-card_small {
   border-radius: 3px;
   border: 1px solid #bbb;
@@ -137,13 +141,23 @@ ul {
   background: #fafafa;
 }
 
-.Piles_info {
+.Piles {
+  margin-bottom: 15px;
+  border-bottom: 3px double #888;
+}
+
+.Piles_infoBar {
   display: flex;
   align-items: center;
+  margin-bottom: 10px
 }
 
 .Piles_headline {
   margin: 0 20px 0 0;
+}
+
+.Piles_newGame {
+  margin-left: auto;
 }
 
 .Piles_note {
@@ -156,12 +170,25 @@ ul {
   list-style-type: none;
   display: flex;
   min-height: 30px;
+  margin-bottom: 15px;
 }
 
 .Pile {
-  margin-right: 10px;
+  flex: 1 1 0;
+  margin-right: 15px;
 }
 
-.Pile:last-child {
-  margin-right: 0;
+.Pile_serveCardsWrapper {
+  flex: 1 1 0;
+}
+
+.Piles_serveCards {
+  width: 100%;
+  border-radius: 3px;
+  background: #234892;
+  color: white;
+  border: 0;
+  height: 100%;
+  margin: 2px 0;
+  height: 25px;
 }

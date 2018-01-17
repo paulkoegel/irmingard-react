@@ -11,6 +11,7 @@ export default class Pile extends Component {
     const colour = colourForSuit(suit);
     const placeholderClassNames = [
       'Pile_placeholder',
+      'Card isOnPile',
       colour
     ].join(' ');
 

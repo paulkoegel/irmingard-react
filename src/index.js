@@ -34,7 +34,7 @@ const unminifyCards = gameState => {
 
 window.encodeGameState = gameState => {
   const compressedGameState = minifyCards(gameState);
-  return compressToBase64(JSON.stringify(compressedGameState.toJS())).replace(/\+/g, '-').replace(/\//g, '_').replace(/\n/g, '');
+  return compressToBase64(JSON.stringify(compressedGameState.toJS())).replace(/\+/g, '-').replace(/\//g, '_');
 };
 
 window.decodeGameState = encodedGameState => {
