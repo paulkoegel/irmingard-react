@@ -37,7 +37,8 @@ export default class Game extends Component {
   }
 
   cardAt (columnIndex, cardIndex) {
-    return this.state.gameState.columns.get(columnIndex).cards.get(cardIndex);
+    const column = this.state.gameState.columns.get(columnIndex);
+    return column ? column.cards.get(cardIndex) : null;
   }
 
   childrenOf (columnIndex, cardIndex) {
@@ -128,8 +129,6 @@ export default class Game extends Component {
     } else { // single click
       if (previousColumnIndex !== undefined && previousCardIndex !== undefined) { // try to move previously marked cards below the currently marked one; 0 is falsy...
         if (this.canBePlacedBelow(this.cardAt(previousColumnIndex, previousCardIndex), this.cardAt(columnIndex, cardIndex))) {
-          // DONE - move marked cards to target
-          // DONE - unmark all cards
           this.setState(state => {
             const cardsToMove = state.gameState.columns.get(previousColumnIndex).cards.splice(0, previousCardIndex);
             return {
@@ -180,19 +179,23 @@ export default class Game extends Component {
   handleColumnPlaceholderClick = clickedColumnIndex => () => {
     const { gameState } = this.state;
     const [ markedColIndex, markedCardIndex ] = gameState.markedCardCoordinates;
-    const markedCard = this.cardAt(markedColIndex, markedCardIndex);
+    if (markedColIndex > TOTAL_COLUMNS-1) return; // when card in pile is selected
 
-    if (markedCard.value === 13) { // king
+    const markedCard = this.cardAt(markedColIndex, markedCardIndex);
+    const markedColumnCards = gameState.columns.get(markedColIndex).cards;
+    const markedCardWithChildren = markedColumnCards.slice(markedCardIndex, markedColumnCards.size);
+
+    if (markedCard && markedCard.value === 13) { // king
       this.setState({
         gameState: gameState
-          .updateIn(['columns', markedColIndex, 'cards'], cards => cards.pop()) // TODO: move this and the next updateIn to function `removeLastCardFromColumn(columnIndex, gameState)`
+          .updateIn(['columns', markedColIndex, 'cards'], cards => cards.slice(0, markedCardIndex)) // TODO: move this and the next updateIn to function `removeLastCardFromColumn(columnIndex, gameState)`
           .updateIn(['columns', markedColIndex], column => column.merge({
             moveableFromIndex: this.calculateMoveableFromIndex(column),
             openFromIndex: column.openFromIndex === 0
               ? null
               : column.openFromIndex >= column.cards.size ? column.openFromIndex - 1 : column.openFromIndex
           }))
-          .updateIn(['columns', clickedColumnIndex, 'cards'], cards => cards.push(markedCard))
+          .updateIn(['columns', clickedColumnIndex, 'cards'], cards => cards.concat(markedCardWithChildren))
           .updateIn(['columns', clickedColumnIndex], column => column.merge({
             moveabeFromIndex: 0,
             openFromIndex: 0
@@ -221,11 +224,20 @@ export default class Game extends Component {
     }
   }
 
+  isKing (card) {
+    return card.value === 13;
+  }
+
   render () {
     const { gameState } = this.state;
+    const markedCard = this.cardAt(gameState.markedCardCoordinates);
+    const className = [
+      'Game',
+      markedCard && this.isKing(markedCard) && 'isMovingKing'
+    ].filter(e => e).join(' ');
 
     return (
-      <div className='Game'>
+      <div className={className}>
         <Piles
           hasCardsOnStack={gameState.stack.size > 0}
           markedCardCoordinates={gameState.markedCardCoordinates}

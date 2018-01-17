@@ -21,6 +21,7 @@ export default class Pile extends Component {
           ? <ul>
             <Card
               card={topCard}
+              cardIndex={cards.size-1}
               onCardClick={onPileCardClick}
               markedCardCoordinates={markedCardCoordinates}
               pileIndex={pile.index}

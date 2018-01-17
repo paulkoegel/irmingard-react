@@ -18,6 +18,7 @@ export default class Column extends Component {
 
   render () {
     const { column, markedCardCoordinates, onColumnCardClick, onPlaceholderClick } = this.props;
+
     return (
       <li className='Column'>
         <ul className='Column_cards'>
@@ -37,7 +38,9 @@ export default class Column extends Component {
             : <div
               className='Column_placeholder'
               onClick={onPlaceholderClick(column.index)}
-            />
+            >
+              Put a king here.
+            </div>
           }
         </ul>
       </li>

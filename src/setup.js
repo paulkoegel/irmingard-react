@@ -1,4 +1,4 @@
-import { fromJS, List, Record } from 'immutable';
+import { fromJS, is, List, Record } from 'immutable';
 import { chain as flatMap, range } from 'ramda'; // Immutable's Range is lazy and gives nothing but pain in `updateIn` calls
 import immutableShuffle from './helpers/shuffle';
 
@@ -110,4 +110,21 @@ const initialGameState = new GameStateRecord({
   stack: makeShuffledStack()
 });
 
-export const newGameState = () => serveCards(initialGameState);
+// special preparation steps to make a successful game more likely:
+// + always start with one random discarded ace
+const specialPrepare = (gameState) => {
+  const randomAce = new CardRecord({
+    deck: 'a',
+    suit: immutableShuffle(SUITS).first(),
+    value: 1
+  });
+
+  return gameState
+    .updateIn(['stack'], stack => stack.filter(card => !is(card, randomAce)))
+    .updateIn(['piles'], piles => {
+      const pile = piles.find(pile => pile.suit === randomAce.suit);
+      return piles.updateIn([pile.index], pile => pile.merge({ cards: pile.cards.push(randomAce) }));
+    });
+};
+
+export const newGameState = () => serveCards(specialPrepare(initialGameState));

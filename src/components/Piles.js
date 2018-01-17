@@ -8,7 +8,7 @@ export default class Piles extends Component {
     }
   }
   render () {
-    const { hasCardsOnStack, onPileCardClick, onServeNewCards, markedCardCoordinates, piles } = this.props;
+    const { hasCardsOnStack, markedCardCoordinates, onPileCardClick, onServeNewCards, piles } = this.props;
 
     return (
       <div className='Piles'>

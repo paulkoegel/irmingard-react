@@ -67,12 +67,6 @@ ul {
   list-style-type: none;
 }
 
-.Column_cards {
-  list-style-type: none;
-  display: flex;
-  flex-direction: column;
-}
-
 .Column {
   margin-right: 15px;
   flex: 1 1 0;
@@ -80,6 +74,31 @@ ul {
 
 .Column:last-child {
   margin-right: 0;
+}
+
+.Column_cards {
+  list-style-type: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.Column_placeholder {
+  margin: 2px auto;
+  height: 25px;
+  border-radius: 3px;
+  border: 1px dashed #999;
+  background-color: #fafafa;
+  font-size: 11px;
+  color: #555;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+.isMovingKing .Column_placeholder {
+  cursor: pointer;
 }
 
 .Card {

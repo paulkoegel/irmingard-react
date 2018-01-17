@@ -13,7 +13,7 @@ export default class Columns extends Component {
             key={index}
             markedCardCoordinates={markedCardCoordinates}
             onColumnCardClick={onColumnCardClick}
-            onPlaceHolderClick={onPlaceholderClick}
+            onPlaceholderClick={onPlaceholderClick}
           />
         ))}
       </ul>
