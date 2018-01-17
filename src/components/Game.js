@@ -230,7 +230,7 @@ export default class Game extends Component {
 
   render () {
     const { gameState } = this.state;
-    const markedCard = this.cardAt(gameState.markedCardCoordinates);
+    const markedCard = this.cardAt(...gameState.markedCardCoordinates);
     const className = [
       'Game',
       markedCard && this.isKing(markedCard) && 'isMovingKing'
