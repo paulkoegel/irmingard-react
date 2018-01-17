@@ -8,7 +8,7 @@ export default class Piles extends Component {
     }
   }
   render () {
-    const { hasCardsOnStack, onPileCardClick, onServeNewCards, movingCoordinates, piles } = this.props;
+    const { hasCardsOnStack, onPileCardClick, onServeNewCards, markedCardCoordinates, piles } = this.props;
 
     return (
       <div className='Piles'>
@@ -30,7 +30,7 @@ export default class Piles extends Component {
           { piles.map((pile, index) => (
             <Pile
               key={index}
-              movingCoordinates={movingCoordinates}
+              markedCardCoordinates={markedCardCoordinates}
               onPileCardClick={onPileCardClick}
               pile={pile}
             />

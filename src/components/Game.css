@@ -121,17 +121,20 @@ ul {
   box-shadow: 0px 0px 3px rgba(0, 200, 0, 1);
 }
 
-.Card.isMoving {
+.Card.isMarked {
   background-color: rgba(255, 255, 0, 0.5);
 }
 
 .Card.isOnPile {
   opacity: 1;
   cursor: pointer;
+  border: 1px solid black;
 }
 
 .Card.isOnPile.Pile_placeholder {
   cursor: default;
+  opacity: 0.35;
+  border: 1px solid black;
 }
 
 .m-card_small {

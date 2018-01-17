@@ -5,7 +5,7 @@ import symbolForSuit from 'helpers/symbolForSuit';
 
 export default class Pile extends Component {
   render () {
-    const { movingCoordinates, onPileCardClick, pile } = this.props;
+    const { markedCardCoordinates, onPileCardClick, pile } = this.props;
     const { cards, suit } = pile;
     const topCard = cards.last();
     const colour = colourForSuit(suit);
@@ -22,7 +22,7 @@ export default class Pile extends Component {
             <Card
               card={topCard}
               onCardClick={onPileCardClick}
-              movingCoordinates={movingCoordinates}
+              markedCardCoordinates={markedCardCoordinates}
               pileIndex={pile.index}
             />
           </ul>

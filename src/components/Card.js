@@ -25,16 +25,16 @@ export default class Card extends Component {
       columnIndex,
       isMoveable,
       isOpen,
-      movingCoordinates,
+      markedCardCoordinates,
       pileIndex } = this.props;
     const { suit } = card;
-    const isMoving =
-      (columnIndex === movingCoordinates[0] && cardIndex >= movingCoordinates[1]) ||
-      (pileIndex === movingCoordinates[0] - TOTAL_COLUMNS);
+    const isMarked =
+      (columnIndex === markedCardCoordinates[0] && cardIndex >= markedCardCoordinates[1]) ||
+      (pileIndex === markedCardCoordinates[0] - TOTAL_COLUMNS);
     const wrapperClassNames = ['Card',
       colourForSuit(suit),
       (pileIndex !== undefined) && 'isOnPile', // pileIndex can be 0 (which is falsy in JavaScript)
-      isMoving && 'isMoving',
+      isMarked && 'isMarked',
       isMoveable && 'isMoveable',
       'isOpen'
     ].filter(e => e).join(' ');

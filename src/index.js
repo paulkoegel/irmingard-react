@@ -19,7 +19,6 @@ const minifyCards = gameState => {
 };
 
 const unminifyCards = gameState => {
-  console.log('unminifyCards', gameState.columns, gameState);
   // if this manual reconstruction proves hard to maintain,
   // consider using https://github.com/glenjamin/transit-immutable-js
   return new GameStateRecord({

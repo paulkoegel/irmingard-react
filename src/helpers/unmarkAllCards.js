@@ -1,3 +1,3 @@
 export default function unmarkAllCards (gameState) {
-  return gameState.updateIn(['movingCoordinates'], movingCoordinates => []);
+  return gameState.updateIn(['markedCardCoordinates'], markedCardCoordinates => []);
 }
