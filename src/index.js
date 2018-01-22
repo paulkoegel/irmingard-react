@@ -40,13 +40,21 @@ window.decodeGameState = encodedGameState => {
   return unminifyCards(JSON.parse(decompressFromBase64(encodedGameState.replace(/-/g, '+').replace(/_/g, '/'))));
 };
 
+// TODO: think about doing this with `setState` (and without unmounting) inside the Game component
 window.restoreGameState = encodedGameState => {
   const gameState = window.decodeGameState(encodedGameState);
   ReactDOM.unmountComponentAtNode(document.getElementById('root')); // <Game> doesn't get properly reinitialized without this step
   ReactDOM.render(<Game gameState={gameState} />, document.getElementById('root'));
 };
 
-const encodedGameStateFromUrl = window.location.search.substring(1, window.location.search.length);
-const gameStateFromUrl = encodedGameStateFromUrl ? window.decodeGameState(encodedGameStateFromUrl) : null;
-ReactDOM.render(<Game gameState={gameStateFromUrl} />, document.getElementById('root'));
+window.encodedGameStateFromUrl = () => {
+  return window.location.search.substring(1, window.location.search.length);
+};
+
+const gameStateFromUrl = () => {
+  const encodedGameStateFromUrl = window.encodedGameStateFromUrl();
+  return encodedGameStateFromUrl ? window.decodeGameState(encodedGameStateFromUrl) : null;
+};
+
+ReactDOM.render(<Game gameState={gameStateFromUrl()} />, document.getElementById('root'));
 registerServiceWorker();

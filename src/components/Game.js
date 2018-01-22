@@ -6,8 +6,6 @@ import colourForSuit from 'helpers/colourForSuit';
 import serveNewCards from 'helpers/serveNewCards';
 import { newGameState, TOTAL_COLUMNS } from 'setup';
 
-let historyCounter = 1;
-
 export default class Game extends Component {
   state = {
     // "Note that state must be a plain JS object, and not an Immutable collection, because React's setState API expects an object literal and will merge it (Object.assign) with the previous state." (https://github.com/facebook/immutable-js/wiki/Immutable-as-React-state)
@@ -18,17 +16,19 @@ export default class Game extends Component {
     window.onkeydown = this.handleKeyDown;
     window.gameState = () => this.state.gameState;
     window.history.replaceState(null, null, this.urlWithGameState(this.state.gameState));
+    window.onpopstate = event => {
+      window.restoreGameState(window.encodedGameStateFromUrl());
+    };
   }
 
   componentWillUpdate (nextProps, nextState) {
     const urlWithGameState = this.urlWithGameState(nextState.gameState);
-    console.log(historyCounter++, urlWithGameState);
     window.history.pushState(null, null, urlWithGameState);
   }
 
   urlWithGameState (gameState) {
     const encodedGameState = window.encodeGameState(gameState);
-    return `${window.location.origin}/?${encodedGameState}`;
+    return `/?${encodedGameState}`;
   }
 
   canBePlacedBelow (cardBelow, cardAbove) {
