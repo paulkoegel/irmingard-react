@@ -39,7 +39,7 @@ export default class Column extends Component {
               className='Column_placeholder'
               onClick={onPlaceholderClick(column.index)}
             >
-              Put a king here.
+              Königsplatz
             </div>
           }
         </ul>

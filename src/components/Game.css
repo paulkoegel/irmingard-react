@@ -37,6 +37,7 @@
 body {
   font-size: 1.6rem;
   font-family: Helvetica, Arial, sans-serif;
+  background: #ddd;
 }
 
 ul {
@@ -113,7 +114,7 @@ ul {
   align-items: center;
   justify-content: center;
   user-select: none;
-  opacity: 0.35;
+  opacity: 0.60;
 }
 
 @media (min-width: 700px) {
@@ -126,7 +127,8 @@ ul {
   background-position: center 72px;
   background-image: url(../images/card-back.png);
   background-color: #FCDFDF;
-  opacity: 0.6;
+  opacity: 1;
+  border: 1px solid rgba(20, 0, 0, 0.4);
 }
 
 .Card.isMoveable {
@@ -168,18 +170,45 @@ ul {
   border-bottom: 3px double #888;
 }
 
-.Piles_infoBar {
+.Piles_metaBar {
   display: flex;
   align-items: center;
   margin-bottom: 10px
+}
+
+.Piles_info {
+  width: 77.78%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
 }
 
 .Piles_headline {
   margin: 0 20px 0 0;
 }
 
-.Piles_newGame {
+.Piles_buttons {
   margin-left: auto;
+  padding-left: 11px;
+  display: flex;
+  flex: 1;
+}
+
+.Piles_undo {
+  margin-right: 15px;
+  flex: 1;
+}
+
+.Piles_backArrow {
+  font-size: 22px;
+  font-weight: bold;
+  margin-right: 5px;
+  position: relative;
+  top: 2px;
+}
+
+.Piles_newGame {
+  flex: 1;
 }
 
 .Piles_note {

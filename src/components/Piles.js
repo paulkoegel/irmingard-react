@@ -12,18 +12,28 @@ export default class Piles extends Component {
 
     return (
       <div className='Piles'>
-        <div className='Piles_infoBar'>
-          <h3 className='Piles_headline'>
-            Discard Piles
-          </h3>
-          <p className='Piles_note'>
-            Start discarding aces here with a double click - then twos, threes, etc.
-          </p>
-          <button
-            className='Piles_newGame'
-            onClick={this.startNewGame}>
-            New game
-          </button>
+        <div className='Piles_metaBar'>
+          <div className='Piles_info'>
+            <h3 className='Piles_headline'>
+              Irmingard
+            </h3>
+            <p className='Piles_note'>
+              { /* Start discarding aces here with a double click - then twos, threes, etc. */ }
+            </p>
+          </div>
+          <div className='Piles_buttons'>
+            <button
+              className='Piles_undo'
+              onClick={() => window.history.back()}>
+              <span className='Piles_backArrow'>&#10554;</span>
+              Zurück
+            </button>
+            <button
+              className='Piles_newGame'
+              onClick={this.startNewGame}>
+              Neues Spiel
+            </button>
+          </div>
         </div>
 
         <ul className='Piles_list'>
@@ -40,7 +50,7 @@ export default class Piles extends Component {
               className='Piles_serveCards'
               disabled={!hasCardsOnStack}
               onClick={onServeNewCards}>
-              Serve cards
+              Neue Karten
             </button>
           </li>
         </ul>
