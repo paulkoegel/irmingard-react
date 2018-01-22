@@ -1,10 +1,12 @@
-import React, { Component } from 'react';
-import Columns from 'components/Columns';
 import './Game.css';
-import Piles from 'components/Piles';
+
+import React, { Component } from 'react';
 import colourForSuit from 'helpers/colourForSuit';
 import serveNewCards from 'helpers/serveNewCards';
 import { newGameState, TOTAL_COLUMNS } from 'setup';
+import Columns from './Columns';
+import GameWonModal from './GameWonModal';
+import Piles from './Piles';
 
 export default class Game extends Component {
   state = {
@@ -24,6 +26,14 @@ export default class Game extends Component {
   componentWillUpdate (nextProps, nextState) {
     const urlWithGameState = this.urlWithGameState(nextState.gameState);
     window.history.pushState(null, null, urlWithGameState);
+  }
+
+  updateState (updateFunction) {
+    this.setState(updateFunction, this.afterStateUpdate);
+  }
+
+  afterStateUpdate () {
+    this.checkIsGameWon();
   }
 
   urlWithGameState (gameState) {
@@ -90,22 +100,40 @@ export default class Game extends Component {
     return cardIndex >= column.openFromIndex;
   }
 
-  discardToPile (columnIndex, cardIndex) {
-    const gameState = this.state.gameState;
-    const cardToDiscard = gameState.columns.get(columnIndex).cards.get(cardIndex);
-    const targetPileIndex = this.freePileFor(cardToDiscard).index;
+  checkIsGameWon () {
+    const { gameState } = this.state;
+    if (gameState.stack.size === 0 &&
+      gameState.columns.every(column =>
+        column.openFromIndex === 0 && column.moveableFromIndex === 0
+      )) {
+      this.updateState(state => {
+        return {
+          gameState: {
+            isWon: true
+          }
+        };
+      });
+    }
+  }
 
-    this.setState(state => ({
-      gameState: gameState
-        .updateIn(['piles', targetPileIndex, 'cards'], cards => cards.push(cardToDiscard))
-        .updateIn(['columns', columnIndex, 'cards'], cards => cards.pop())
-        .updateIn(['columns', columnIndex], column => column.merge({
-          moveableFromIndex: this.calculateMoveableFromIndex(column),
-          openFromIndex: column.openFromIndex === 0
-            ? null
-            : column.openFromIndex >= column.cards.size ? column.openFromIndex - 1 : column.openFromIndex
-        }))
-    }));
+  discardToPile (columnIndex, cardIndex) {
+    this.updateState(state => {
+      const gameState = state.gameState;
+      const cardToDiscard = gameState.columns.get(columnIndex).cards.get(cardIndex);
+      const targetPileIndex = this.freePileFor(cardToDiscard).index;
+
+      return {
+        gameState: gameState
+          .updateIn(['piles', targetPileIndex, 'cards'], cards => cards.push(cardToDiscard))
+          .updateIn(['columns', columnIndex, 'cards'], cards => cards.pop())
+          .updateIn(['columns', columnIndex], column => column.merge({
+            moveableFromIndex: this.calculateMoveableFromIndex(column),
+            openFromIndex: column.openFromIndex === 0
+              ? null
+              : column.openFromIndex >= column.cards.size ? column.openFromIndex - 1 : column.openFromIndex
+          }))
+      };
+    });
   }
 
   freePileFor (card) {
@@ -131,7 +159,7 @@ export default class Game extends Component {
       if (this.isDiscardable(columnIndex, cardIndex)) {
         this.discardToPile(columnIndex, cardIndex);
       } else {
-        this.setState(state => (
+        this.updateState(state => (
           {
             gameState: state.gameState.merge({
               markedCardCoordinates: []
@@ -146,10 +174,11 @@ export default class Game extends Component {
           // TODO: can we unify this and remove the `if` distinguishing comlum-column from pile-column moves?
           // move card from column to column
           if (previousColumnOrPileIndex <= TOTAL_COLUMNS-1) {
-            this.setState(state => {
-              const cardsToMove = state.gameState.columns.get(previousColumnOrPileIndex).cards.splice(0, previousCardIndex);
+            this.updateState(state => {
+              const { gameState } = state;
+              const cardsToMove = gameState.columns.get(previousColumnOrPileIndex).cards.splice(0, previousCardIndex);
               return {
-                gameState: state.gameState
+                gameState: gameState
                   .merge({
                     markedCardCoordinates: []
                   })
@@ -167,7 +196,7 @@ export default class Game extends Component {
               };
             });
           } else { // move card from pile to column
-            this.setState(state => {
+            this.updateState(state => {
               return {
                 gameState: state.gameState
                   .merge({
@@ -180,7 +209,7 @@ export default class Game extends Component {
             });
           }
         } else {
-          this.setState(state => (
+          this.updateState(state => (
             {
               gameState: state.gameState.merge({
                 markedCardCoordinates: [columnIndex, cardIndex]
@@ -189,7 +218,7 @@ export default class Game extends Component {
           ));
         }
       } else { // no marked cards -  mark this one and its children
-        this.setState(state => (
+        this.updateState(state => (
           {
             gameState: state.gameState.merge({
               markedCardCoordinates: [columnIndex, cardIndex]
@@ -216,8 +245,8 @@ export default class Game extends Component {
     const markedCardWithChildren = markedColumnCards.slice(markedCardIndex, markedColumnCards.size);
 
     if (markedCard && markedCard.value === 13) { // king
-      this.setState(state => {
-        const { gameState } = this.state;
+      this.updateState(state => {
+        const { gameState } = state;
         return {
           gameState: gameState
             .updateIn(['columns', markedColIndex, 'cards'], cards => cards.slice(0, markedCardIndex)) // TODO: move this and the next updateIn to function `removeLastCardFromColumn(columnIndex, gameState)`
@@ -238,7 +267,7 @@ export default class Game extends Component {
   }
 
   handlePileCardClick = (pileIndex, cardIndex) => {
-    this.setState(state => (
+    this.updateState(state => (
       {
         gameState: state.gameState.merge({
           markedCardCoordinates: [TOTAL_COLUMNS + pileIndex, cardIndex]
@@ -249,7 +278,7 @@ export default class Game extends Component {
 
   handleServeNewCards = () => {
     if (this.state.gameState.stack.size > 0) {
-      this.setState(state => (
+      this.updateState(state => (
         {
           gameState: serveNewCards(state.gameState)
         }
@@ -285,6 +314,7 @@ export default class Game extends Component {
           onColumnCardClick={this.handleColumnCardClick}
           onPlaceholderClick={this.handleColumnPlaceholderClick}
         />
+        <GameWonModal isWon={gameState.isWon} />
       </div>
     );
   }

@@ -99,6 +99,7 @@ const serveCards = gameState => {
 
 export const GameStateRecord = Record({
   columns: null,
+  isWon: false,
   markedCardCoordinates: [],
   piles: null,
   stack: null

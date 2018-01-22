@@ -243,3 +243,37 @@ ul {
   margin: 2px 0;
   height: 25px;
 }
+
+.GameWonModal {
+  position: absolute;
+  height: 80vh;
+  width: 800px;
+  left: calc(50% - 400px);
+  top: calc(50% - 40vh);
+  background: white;
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 3px 3px 5px rgba(0,0,0, 0.5);
+  flex-direction: column;
+}
+
+.GameWonModal_imageWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.GameWonModal_image {
+  display: block;
+}
+
+.GameWonModal_text {
+  flex: 1 1 auto;
+}
+
+.GameWonModal_text h1 {
+  margin: 0;
+}
