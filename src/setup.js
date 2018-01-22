@@ -6,8 +6,8 @@ import immutableShuffle from './helpers/shuffle';
 export const TOTAL_COLUMNS = 9;
 const SUITS = List.of(
   'hearts',
-  'spades',
   'diamonds',
+  'spades',
   'clubs'
 );
 const DOUBLE_SUITS = fromJS(flatMap(suit => [suit, suit], SUITS));
