@@ -140,7 +140,6 @@ export default class Game extends Component {
         ));
       }
     } else { // single click
-      console.log('else', previousColumnOrPileIndex, columnIndex, previousCardIndex, cardIndex);
       if (previousColumnOrPileIndex !== undefined && previousCardIndex !== undefined) { // try to move previously marked cards below the currently marked one; 0 is falsy...
         const cardToMove = this.cardAt(previousColumnOrPileIndex, previousCardIndex);
         if (this.canBePlacedBelow(cardToMove, this.cardAt(columnIndex, cardIndex))) {
@@ -217,20 +216,23 @@ export default class Game extends Component {
     const markedCardWithChildren = markedColumnCards.slice(markedCardIndex, markedColumnCards.size);
 
     if (markedCard && markedCard.value === 13) { // king
-      this.setState({
-        gameState: gameState
-          .updateIn(['columns', markedColIndex, 'cards'], cards => cards.slice(0, markedCardIndex)) // TODO: move this and the next updateIn to function `removeLastCardFromColumn(columnIndex, gameState)`
-          .updateIn(['columns', markedColIndex], column => column.merge({
-            moveableFromIndex: this.calculateMoveableFromIndex(column),
-            openFromIndex: column.openFromIndex === 0
-              ? null
-              : column.openFromIndex >= column.cards.size ? column.openFromIndex - 1 : column.openFromIndex
-          }))
-          .updateIn(['columns', clickedColumnIndex, 'cards'], cards => cards.concat(markedCardWithChildren))
-          .updateIn(['columns', clickedColumnIndex], column => column.merge({
-            moveabeFromIndex: 0,
-            openFromIndex: 0
-          }))
+      this.setState(state => {
+        const { gameState } = this.state;
+        return {
+          gameState: gameState
+            .updateIn(['columns', markedColIndex, 'cards'], cards => cards.slice(0, markedCardIndex)) // TODO: move this and the next updateIn to function `removeLastCardFromColumn(columnIndex, gameState)`
+            .updateIn(['columns', markedColIndex], column => column.merge({
+              moveableFromIndex: this.calculateMoveableFromIndex(column),
+              openFromIndex: column.openFromIndex === 0
+                ? null
+                : column.openFromIndex >= column.cards.size ? column.openFromIndex - 1 : column.openFromIndex
+            }))
+            .updateIn(['columns', clickedColumnIndex, 'cards'], cards => cards.concat(markedCardWithChildren))
+            .updateIn(['columns', clickedColumnIndex], column => column.merge({
+              moveabeFromIndex: 0,
+              openFromIndex: 0
+            }))
+        };
       });
     }
   }
