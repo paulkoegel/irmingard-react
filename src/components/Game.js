@@ -21,6 +21,7 @@ export default class Game extends Component {
     window.onpopstate = event => {
       window.restoreGameState(window.encodedGameStateFromUrl());
     };
+    this.checkIsGameWon();
   }
 
   componentWillUpdate (nextProps, nextState) {
@@ -102,15 +103,16 @@ export default class Game extends Component {
 
   checkIsGameWon () {
     const { gameState } = this.state;
-    if (gameState.stack.size === 0 &&
+
+    if (!gameState.isWon && gameState.stack.size === 0 &&
       gameState.columns.every(column =>
-        column.openFromIndex === 0 && column.moveableFromIndex === 0
+        [-1, 0, null].includes(column.openFromIndex) && [0, null].includes(column.moveableFromIndex)
       )) {
-      this.updateState(state => {
+      this.setState(state => { // do NOT use `updateState` to prevent loop
         return {
-          gameState: {
+          gameState: gameState.merge({
             isWon: true
-          }
+          })
         };
       });
     }
@@ -314,7 +316,7 @@ export default class Game extends Component {
           onColumnCardClick={this.handleColumnCardClick}
           onPlaceholderClick={this.handleColumnPlaceholderClick}
         />
-        <GameWonModal isWon={gameState.isWon} />
+        {gameState.isWon && <GameWonModal />}
       </div>
     );
   }

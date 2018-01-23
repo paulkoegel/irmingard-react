@@ -244,6 +244,10 @@ ul {
   height: 25px;
 }
 
+.Piles_serveCards:disabled {
+  color: #aaa;
+}
+
 .GameWonModal {
   position: absolute;
   height: 80vh;
@@ -268,6 +272,7 @@ ul {
 
 .GameWonModal_image {
   display: block;
+  height: 90%;
 }
 
 .GameWonModal_text {
@@ -276,4 +281,16 @@ ul {
 
 .GameWonModal_text h1 {
   margin: 0;
+}
+
+.GameWonModal.isHidden {
+  display: none;
+}
+
+.GameWonModal_close {
+  border: 0;
+  background: white;
+  font-weight: bold;
+  font-size: 18px;
+  margin-left: auto;
 }

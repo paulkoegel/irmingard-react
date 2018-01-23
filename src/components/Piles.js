@@ -3,7 +3,7 @@ import Pile from './Pile';
 
 export default class Piles extends Component {
   startNewGame () {
-    if (window.confirm('Start a new game - are you sure?')) {
+    if (window.confirm('Geht\'s nicht mehr weiter? Das war wohl zu gut gemischt...')) {
       window.location.href = window.location.origin;
     }
   }

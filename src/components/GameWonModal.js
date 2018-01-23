@@ -2,9 +2,18 @@ import React from 'react';
 import schmiedelgard from 'images/restricted/schmiedelgard_small.jpg';
 
 export default class GameWonModal extends React.Component {
+  state = {
+    isHidden: false
+  };
+
   render () {
+    const classNames = [
+      'GameWonModal',
+      this.state.isHidden && 'isHidden'
+    ].filter(e => e).join(' ');
     return (
-      <div className='GameWonModal'>
+      <div className={classNames}>
+        <button className='GameWonModal_close' onClick={() => { this.setState(state => ({ isHidden: true })); }}>X</button>
         <div className='GameWonModal_text'>
           <h1>Super, das geht auf!</h1>
         </div>
